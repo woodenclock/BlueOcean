@@ -1,93 +1,127 @@
-# rmf2-blue-ocean-stack
+# rmf2-demo
 
+Umbrella repo for the GameTL RMF2 Blue Ocean demo stack. One `git clone` + `docker compose up` spins the full system.
 
+**Important:** Every source repo must be on the `demo-june-blue-ocean` branch. The `.repos` manifest pins that branch for `vcs import`; do not substitute `main` or other branches — the demo stack is only tested and wired together on `demo-june-blue-ocean`.
 
-## Getting started
+## Ports
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+All service ports and spellbook paths live in [`config/config.env`](config/config.env). Docker Compose loads them via the `.env` symlink. Change a port in one place — host mapping and in-container listeners stay aligned.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+| Variable | Service | Default |
+|---|---|---|
+| `UI_PORT` | UI dashboard | 3000 |
+| `SCHEDULER_PORT` | Scheduler API | 8089 |
+| `TASK_ORCHESTRATOR_PORT` | Task Orchestrator | 2727 |
+| `VDA5050_PORT` | VDA5050 master API | 8000 |
+| `MQTT_PORT` | MQTT broker | 1883 |
+| `AMQP_PORT` | RabbitMQ AMQP | 5672 |
+| `AMQP_MGMT_PORT` | RabbitMQ management UI | 15672 |
 
-## Add your files
+Fixture scripts (`fixtures/*.py`, `send_mapf_schedule.py`) read the same variables when `--port` is omitted.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Stack
+
+All repos below are checked out at `demo-june-blue-ocean`.
+
+| Service | Repo | Port variable |
+|---|---|---|
+| UI dashboard | rmf2-ui-gametl | `UI_PORT` |
+| Scheduler API | rmf2_scheduler_gametl | `SCHEDULER_PORT` |
+| Task Orchestrator | rmf2_task_orchestrator_gametl | `TASK_ORCHESTRATOR_PORT` |
+| MAPF planner | res_mapf_gametl | — |
+| VDA5050 adapter | vda5050_core_gametl | `VDA5050_PORT` |
+| MQTT broker | eclipse-mosquitto | `MQTT_PORT` |
+| AMQP broker | rabbitmq | `AMQP_PORT` / `AMQP_MGMT_PORT` |
+
+## Prerequisites
+
+- Docker + Docker Compose v2
+- [vcstool](https://github.com/dirk-thomas/vcstool): `pip install vcstool`
+
+## Quick Start
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/GameTL/rmf2-demo && cd rmf2-demo
+
+# 2. Pull all five source repos into src/ (demo-june-blue-ocean on each)
+vcs import src < .repos
+
+# 3. Build and start everything
+docker compose up --build
+```
+
+Services come up in dependency order. Wait ~2 min for the ROS builds on first run.
+
+## Access
+
+Default URLs (see `config/config.env` to customize):
+
+| Service | URL |
+|---|---|
+| UI Dashboard | http://localhost:3000 |
+| Scheduler API docs | http://localhost:8089/docs |
+| Task Orchestrator diagram | http://localhost:2727 |
+| VDA5050 master API docs | http://localhost:8000/docs |
+| RabbitMQ management | http://localhost:15672 (guest / guest) |
+
+## Demo Fixtures
+
+Send a demo workflow (MANIP1 Depalletize → SNS1 Store) through the full stack:
+
+Each fixture declares its own dependencies (PEP 723), so `uv run` provisions
+them automatically — no `pip install` needed.
+
+```bash
+# Publish a Schedule to the task orchestrator via AMQP
+uv run fixtures/send_schedule.py
+
+# Publish a VDA5050 route order to the Autoxing L300 adapter via MQTT
+uv run fixtures/publish_mqtt_route.py
+
+# Use --broker / --host flags when targeting a remote host:
+uv run fixtures/send_schedule.py --host <vm-ip>
+uv run fixtures/publish_mqtt_route.py --broker <vm-ip>
+```
+
+See `fixtures/demo_tasks.json` for raw payload reference.
+
+## Repo Layout
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/ROSI-AP/rmf2/blueocean/rmf2-blue-ocean-stack.git
-git branch -M main
-git push -uf origin main
+rmf2-demo/
+├── .repos                          # vcstool manifest (all 5 repos, demo-june-blue-ocean)
+├── docker-compose.yml              # full stack orchestration
+├── docker/
+│   ├── task-orchestrator.Dockerfile   # Rust multi-stage build
+│   ├── res-mapf.Dockerfile            # ROS Jazzy + Python + MAPF
+│   └── vda5050.Dockerfile             # ROS Jazzy + C++
+├── config/
+│   ├── mosquitto.conf              # anonymous MQTT on 1883
+│   └── task_orchestrator.toml     # Docker-aware host overrides
+├── fixtures/
+│   ├── send_schedule.py            # AMQP Schedule publisher
+│   ├── publish_mqtt_route.py       # MQTT VDA5050 route publisher
+│   └── demo_tasks.json             # sample task/schedule payloads
+└── src/                            # populated by: vcs import src < .repos
+    ├── rmf2-ui-gametl/
+    ├── rmf2_scheduler_gametl/
+    ├── rmf2_task_orchestrator_gametl/
+    ├── res_mapf_gametl/
+    └── vda5050_core_gametl/
 ```
 
-## Integrate with your tools
+## Branch: `demo-june-blue-ocean`
 
-* [Set up project integrations](https://gitlab.com/ROSI-AP/rmf2/blueocean/rmf2-blue-ocean-stack/-/settings/integrations)
+This demo depends on a coordinated set of changes across all five source repos. Each repo must be on `demo-june-blue-ocean`:
 
-## Collaborate with your team
+| Repo | Branch |
+|---|---|
+| rmf2-ui-gametl | `demo-june-blue-ocean` |
+| rmf2_scheduler_gametl | `demo-june-blue-ocean` |
+| rmf2_task_orchestrator_gametl | `demo-june-blue-ocean` |
+| res_mapf_gametl | `demo-june-blue-ocean` |
+| vda5050_core_gametl | `demo-june-blue-ocean` |
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+`vcs import` reads `.repos` and checks out the correct branch automatically. If you clone repos manually, check out `demo-june-blue-ocean` in each one before building.

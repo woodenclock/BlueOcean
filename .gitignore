@@ -1,0 +1,5 @@
+# Nested source repos (managed separately via vcs import / .repos)
+src/
+
+# OS / editor noise
+.DS_Store

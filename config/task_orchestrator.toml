@@ -1,0 +1,18 @@
+# Default ports match config/config.env (overridden in docker-compose via env vars).
+[task_orchestrator.http]
+host = "0.0.0.0"
+port = 2727
+
+[task_orchestrator.amqp]
+host = "amqp-broker"
+port = 5672
+
+[task_orchestrator.mqtt]
+host = "mqtt-broker"
+port = 1883
+
+[task_orchestrator.amqp.consumer]
+exchange = "@RECEIVE@"
+queue = "@RECEIVE@-rmf_schedule"
+routing_key = ""
+exchange_kind = "fanout"

@@ -1,0 +1,72 @@
+{
+  "task_requests": [
+    {
+      "description": "Depalletize task for MANIP1",
+      "payload": {
+        "type": "TaskRequest",
+        "id": "urn:ngsild:Task:task_Depalletize001:TaskRequest",
+        "task_type": "Depalletize",
+        "task_command": "START",
+        "asset_id": "MANIP1",
+        "task_params": {
+          "area_id": "Outgoing1"
+        },
+        "timestamp": "2025-06-08T09:00:00Z",
+        "task_expected_start": "2025-06-08T09:00:00",
+        "task_expected_end": "2025-06-08T09:30:00"
+      }
+    },
+    {
+      "description": "Store task for SNS1",
+      "payload": {
+        "type": "TaskRequest",
+        "id": "urn:ngsild:Task:task_Store001:TaskRequest",
+        "task_type": "Store",
+        "task_command": "START",
+        "asset_id": "SNS1",
+        "task_params": {
+          "area_id": "Incoming1"
+        },
+        "timestamp": "2025-06-08T09:30:00Z",
+        "task_expected_start": "2025-06-08T09:30:00",
+        "task_expected_end": "2025-06-08T10:00:00"
+      }
+    }
+  ],
+  "schedule": {
+    "description": "Full 2-node demo workflow: MANIP1 Depalletize -> SNS1 Store",
+    "amqp_exchange": "@RECEIVE@",
+    "payload": {
+      "type": "Schedule",
+      "id": "workflow-run-demo-001",
+      "payload": {
+        "version": "0.1.0",
+        "start": "node_1",
+        "ops": {
+          "node_1": {
+            "type": "node",
+            "builder": "MQTTDeviceReqNode",
+            "config": {
+              "asset_id": "MANIP1",
+              "task_id": "Depalletize001",
+              "task_type": "Depalletize",
+              "area_id": "Outgoing1"
+            },
+            "next": "node_2"
+          },
+          "node_2": {
+            "type": "node",
+            "builder": "MQTTDeviceReqNode",
+            "config": {
+              "asset_id": "SNS1",
+              "task_id": "Store001",
+              "task_type": "Store",
+              "area_id": "Incoming1"
+            },
+            "next": { "builtin": "terminate" }
+          }
+        }
+      }
+    }
+  }
+}

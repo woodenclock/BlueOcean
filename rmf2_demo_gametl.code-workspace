@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "name": "umbrella (rmf2-demo)",
+      "path": "."
+    },
+    {
+      "name": "res_mapf_gametl",
+      "path": "src/res_mapf_gametl"
+    },
+    {
+      "name": "rmf2_scheduler_gametl",
+      "path": "src/rmf2_scheduler_gametl"
+    },
+    {
+      "name": "rmf2_task_orchestrator_gametl",
+      "path": "src/rmf2_task_orchestrator_gametl"
+    },
+    {
+      "name": "rmf2-ui-gametl",
+      "path": "src/rmf2-ui-gametl"
+    },
+    {
+      "name": "vda5050_core_gametl",
+      "path": "src/vda5050_core_gametl"
+    }
+  ],
+  "settings": {
+    "git.autoRepositoryDetection": "subFolders",
+    "git.repositoryScanMaxDepth": 3,
+    "git.detectSubmodules": true,
+    "git.scmRepositories.visible": 10
+  }
+}

@@ -1,0 +1,67 @@
+# Real physical demo graph (ARTC site) — SEPARATE from the dry-run map
+# (gametl_demo.lif.yaml). Drawn from the hand-measured sketch of the AutoXing
+# ("From Mapping 40") master map; real-world x/y per node live in
+# src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/gametl_demo_map.real.json
+# (the VDA5050 master re-resolves order coords by node id from that file —
+# the grid ids here are planner-only).
+#
+# Shape: 7-node corridor, intersection at 3,1 with a 2-node branch below
+# (3,0 then 2,0), and the Reeman start stub 6,2 above the corridor's right
+# end 6,1. No blocked edges — the real space has no shortcut to block.
+#
+#   0,1 - 1,1 - 2,1 - 3,1 - 4,1 - 5,1 - 6,1
+#                      |                 |
+#               2,0 - 3,0               6,2
+#
+# Conflict story (same as the dry run): reeman crosses the intersection and
+# passes through autoxing's goal 3,0 on the way to 2,0; CBS coordinates who
+# goes first.
+
+map:
+  id: gametl_demo_real
+  frame: From Mapping 40
+  notes:
+    - "Real coords per node: gametl_demo_map.real.json (AutoXing map frame)."
+
+nodes:
+  "0,1":
+    grid: [0, 1]   # real (-5, -7)    autoxing start
+  "1,1":
+    grid: [1, 1]   # real (-4.15, -2)
+  "2,1":
+    grid: [2, 1]   # real (-4.15, 3)
+  "3,1":
+    grid: [3, 1]   # real (-4.15, 6)     intersection
+  "4,1":
+    grid: [4, 1]   # real (-4.2, 9)
+  "5,1":
+    grid: [5, 1]   # real (-4.4, 16)
+  "6,1":
+    grid: [6, 1]   # real (-4.4, 23.7)  corner
+  "6,2":
+    grid: [6, 2]   # real (-9, 23.7)  reeman start
+  "3,0":
+    grid: [3, 0]   # real (0, 6)      autoxing goal
+  "2,0":
+    grid: [2, 0]   # real (0, 2)      reeman goal
+
+edges:
+  - ["0,1", "1,1"]
+  - ["1,1", "2,1"]
+  - ["2,1", "3,1"]
+  - ["3,1", "4,1"]
+  - ["4,1", "5,1"]
+  - ["5,1", "6,1"]
+  - ["6,1", "6,2"]
+  - ["3,1", "3,0"]
+  - ["3,0", "2,0"]
+
+blocked_edges: []
+
+robots:
+  autoxing:
+    start: "0,1"
+    goal: "3,0"
+  reeman:
+    start: "6,2"
+    goal: "2,0"
