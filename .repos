@@ -1,21 +1,21 @@
 repositories:
   src/rmf2-ui-gametl:
     type: git
-    url: https://github.com/GameTL/rmf2-ui-gametl
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/rmf2-ui-gametl.git
     version: demo-june-blue-ocean
   src/rmf2_scheduler_gametl:
     type: git
-    url: https://github.com/GameTL/rmf2_scheduler_gametl
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/rmf2_scheduler_gametl.git
     version: demo-june-blue-ocean
   src/rmf2_task_orchestrator_gametl:
     type: git
-    url: https://github.com/GameTL/rmf2_task_orchestrator_gametl
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/rmf2_task_orchestrator_gametl.git
     version: demo-june-blue-ocean
   src/res_mapf_gametl:
     type: git
-    url: https://github.com/GameTL/res_mapf_gametl
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/res_mapf_gametl.git
     version: demo-june-blue-ocean
   src/vda5050_core_gametl:
     type: git
-    url: https://github.com/GameTL/vda5050_core_gametl
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/vda5050_core_gametl.git
     version: demo-june-blue-ocean
