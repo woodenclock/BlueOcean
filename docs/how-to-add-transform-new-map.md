@@ -12,8 +12,7 @@ single source of truth read at adapter init (`MAP_TF_MODE=file`).
 The folder name minus `_map` IS the robot_id / adapter key (e.g. `reeman-1_map`).
 - `maps/map_transforms.yaml` — the calibrator **merges** this robot's
 `adapters.<robot_id>` entry (other adapters are preserved, not clobbered).
-- `maps/robots.yaml` — set the robot's `onboard_map.name`/`alias` to the new map
-(the calibrator reads it from here, so `map_name` always matches).
+- `maps/robots.yaml` — set the robot's `onboard_map.name`/`alias` to the new map (the calibrator reads it from here, so `map_name` always matches).
 
 ## Steps
 
