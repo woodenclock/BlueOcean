@@ -1,7 +1,7 @@
 # MAPF / VDA5050 demo stack
 #
-# Config: config/config.env (symlinked as .env). Real demo adds config/config-real.env.
-# OrbStack projects: rmf2_demo_gametl-dry-run | rmf2_demo_gametl-real (won't collide).
+# Config: config/config.env (symlinked as .env).
+# Compose project name: rmf2_demo_gametl (same for all profiles; profile selects services).
 #
 # Profiles (mutually exclusive robot/planner/master services):
 #
@@ -10,21 +10,21 @@
 #     curl -X POST 'http://localhost:8089/demo/blue-ocean?dry_run=true'
 #
 #   real-demo — physical robots, ARTC layout (see docs/real-demo-node-coords.md)
-#     # robot IPs in config/config.env: AUTOXING_BASE_URL, REEMAN_ROBOT_IP
-#     docker compose --env-file config/config.env --env-file config/config-real.env up --build
+#     # robot REST hosts live in maps/robots.yaml (`endpoint` per robot), served via the master /robots
+#     docker compose --profile real-demo up --build
 #     curl -X POST 'http://localhost:8089/demo/blue-ocean?dry_run=false'
 #
 #   real-demo (VDA5050 only) — master + real adapters, no scheduler/planner
-#     docker compose --env-file config/config.env --env-file config/config-real.env up --build mqtt-broker vda5050-real autoxing-adapter-real reeman-adapter-real
+#     docker compose --profile real-demo up --build mqtt-broker vda5050-real autoxing-1-real reeman-1-real
 #     Master API: http://localhost:8000/docs
 #
 #   rebuild adapters only (real) — skips vda5050-real; stack must already be up
-#     docker compose --env-file config/config.env --env-file config/config-real.env up --build --no-deps autoxing-adapter-real reeman-adapter-real
+#     docker compose --profile real-demo up --build --no-deps autoxing-1-real reeman-1-real
 #
 #   rebuild adapters only (dry-run)
-#     docker compose up --build --no-deps autoxing-adapter reeman-adapter
+#     docker compose up --build --no-deps autoxing-1 reeman-1
 
-name: ${COMPOSE_PROJECT_NAME}
+name: rmf2_demo_gametl
 
 services:
 
@@ -69,14 +69,16 @@ services:
       # VDA5050 master, used by the live (dry_run=false) /demo/blue-ocean
       # path to read robot poses (/state) and the topology map (/map).
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
-      # /demo/direct-navigate — spellbook REST bypass (no MAPF/VDA5050).
-      AUTOXING_BASE_URL: ${AUTOXING_BASE_URL:-}
-      REEMAN_ROBOT_IP: ${REEMAN_ROBOT_IP:-}
-      MAP_TF_FILE: /app/map_transforms.yaml
+      # /demo/direct-navigate — spellbook REST bypass (no MAPF/VDA5050). Each
+      # robot's REST host now comes from its `endpoint` in maps/robots.yaml,
+      # served via the master /robots — so no per-robot IP env is needed here.
       DIRECT_NAV_WAIT_TIMEOUT_S: ${DIRECT_NAV_WAIT_TIMEOUT_S:-300}
+      # /demo/pick-rack imports autoxing_bridge/spellbook/pick_rack.py directly.
+      VDA_DEMO_ROOT: /vda_demo
+      AUTOXING_SPELLBOOK_DIR: /vda_demo/autoxing_bridge/spellbook
     volumes:
       - scheduler-data:/root/.cache/r2ts-backups
-      - ./src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/map_transforms.yaml:/app/map_transforms.yaml:ro
+      - ./src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean:/vda_demo:ro
     restart: unless-stopped
     networks:
       - rmf2-net
@@ -124,11 +126,13 @@ services:
     build:
       context: .
       dockerfile: docker/mapf-planner.Dockerfile
-    # No depends_on vda5050: the master is profile-gated (vda5050 in dry-run,
-    # vda5050-real in real-demo) and the planner only needs it at plan time
-    # (failed POSTs are logged and retried on the next TaskRequest).
+    # depends_on vda5050: the planner now fetches its topology + robot profiles
+    # from the master at startup (/map/grid, /robots). The master is the single
+    # map authority; MAP_FILE/ROBOTS_FILE below are offline fallbacks only.
     depends_on:
       amqp-broker:
+        condition: service_healthy
+      vda5050:
         condition: service_healthy
     networks:
       - rmf2-net
@@ -136,25 +140,24 @@ services:
       AMQP_HOST: amqp-broker
       AMQP_PORT: ${AMQP_PORT:-5672}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
-      MAP_FILE: /app/maps/gametl_demo.lif.yaml
     restart: unless-stopped
 
-  # Real-demo planner: same image, planning on the separate ARTC layout
-  # (maps/gametl_demo_real.lif.yaml — NOT the dry-run grid).
+  # Real-demo planner: same image. Dry-run vs real topology is decided by WHICH
+  # master it reaches (both via the "vda5050" alias) — vda5050-real serves the
+  # ARTC layout with DEMO_MODE=real — so no map env is needed here.
   mapf-planner-real:
     <<: *mapf-planner
     profiles: ["real-demo"]
-    environment:
-      <<: *mapf-planner-env
-      MAP_FILE: /app/maps/gametl_demo_real.lif.yaml
+    depends_on:
+      amqp-broker:
+        condition: service_healthy
+      vda5050-real:
+        condition: service_healthy
 
-  # Dry-run VDA5050 adapters: one per demo robot, no hardware. Each receives
-  # orders from the master over MQTT, teleports its published pose node by
-  # node and reports node_reached — pretending to follow the plan.
-  # Profile dry-run is active by default (COMPOSE_PROFILES in config/config.env);
-  # the real physical demo swaps these for the *-real services below via
-  # `docker compose --env-file config/config.env --env-file config/config-real.env up --build`.
-  autoxing-adapter:
+  # Dry-run VDA5050 adapters: one per robot_id (autoxing-1, reeman-1).
+  # Service name == robot_id; cache file is <robot_id>_to_master_tf.json under
+  # MAP_TF_CACHE_DIR, resolved from master /robots — not hardcoded in compose.
+  autoxing-1:
     profiles: ["dry-run"]
     build:
       context: .
@@ -170,24 +173,24 @@ services:
     depends_on:
       mqtt-broker:
         condition: service_started
+      vda5050:
+        condition: service_healthy
     networks:
       - rmf2-net
     environment:
       PYTHONUNBUFFERED: "1"
+      # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+      # resolves manufacturer/serial/endpoint/map/transform from the master.
+      ROBOT_ID: autoxing-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
-      # Demo map overrides; home node comes from robots-dry-run.json.
-      VDA5050_MAP_ID: gametl_demo
-      HOME_MAP_PATH: ./gametl_demo_map.json
-      # Seconds per node hop in the dry-run pretend-walk.
+      MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
-      # Read-only view of the reeman calibration cache so the master-map
-      # stale-calibration check works (only used without --dry-run).
-      MAP_TF_CACHE_PATH: /data/reeman_to_autoxing_tf.json
+      MAP_TF_CACHE_DIR: /data
     volumes:
       - reeman-map-tf:/data:ro
     restart: unless-stopped
 
-  reeman-adapter:
+  reeman-1:
     profiles: ["dry-run"]
     build:
       context: .
@@ -203,26 +206,57 @@ services:
     depends_on:
       mqtt-broker:
         condition: service_started
+      vda5050:
+        condition: service_healthy
     networks:
       - rmf2-net
     environment:
       PYTHONUNBUFFERED: "1"
+      # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+      # resolves manufacturer/serial/endpoint/map/transform from the master.
+      ROBOT_ID: reeman-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
-      # Dry-run must report the dry-run master map, not the client's
-      # real-demo default ("From Mapping 40") — the master rejects orders
-      # whose first node is on a different map than the AGV.
-      VDA5050_MAP_ID: gametl_demo
-      # Seconds per node hop in the dry-run pretend-walk.
+      MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
-      # Reeman->AutoXing map calibration (only used without --dry-run):
-      # AutoXing robot REST for the master map, e.g. http://<robot-ip>:8090.
-      AUTOXING_BASE_URL: ${AUTOXING_BASE_URL:-}
-      # Persisted calibration survives restarts so AutoXing being offline at
-      # init falls back to the last good transform instead of blocking.
-      MAP_TF_CACHE_PATH: /data/reeman_to_autoxing_tf.json
+      MAP_TF_CACHE_DIR: /data
     volumes:
       - reeman-map-tf:/data
+      - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
     restart: unless-stopped
+
+  # reeman-2-blue:
+  #   profiles: ["dry-run"]
+  #   build:
+  #     context: .
+  #     dockerfile: docker/vda5050.Dockerfile
+  #   entrypoint: ["/bin/bash", "-lc"]
+  #   working_dir: /vda_ws/src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean
+  #   command:
+  #     - |
+  #       source /opt/ros/jazzy/setup.bash
+  #       source /vda_ws/install/setup.bash
+  #       uv sync
+  #       uv run python3 example_reeman_adapter_client.py --dry-run
+  #   depends_on:
+  #     mqtt-broker:
+  #       condition: service_started
+  #     vda5050:
+  #       condition: service_healthy
+  #   networks:
+  #     - rmf2-net
+  #   environment:
+  #     PYTHONUNBUFFERED: "1"
+  #     # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+  #     # resolves manufacturer/serial/endpoint/map/transform from the master.
+  #     ROBOT_ID: reeman-2-blue
+  #     MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
+  #     MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
+  #     DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
+  #     MAP_TF_CACHE_DIR: /data
+  #   volumes:
+  #     - reeman-map-tf:/data
+  #     - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
+  #   restart: unless-stopped
 
   vda5050: &vda5050-master
     profiles: ["dry-run"]
@@ -236,38 +270,66 @@ services:
         condition: service_started
     networks:
       - rmf2-net
+    # The master is the single map/transform/robots authority: mount the
+    # canonical maps/ dir and serve it over /map, /map/grid, /transform, /robots.
+    volumes:
+      - ./maps:/app/maps:ro
     environment: &vda5050-master-env
       VDA5050_PORT: ${VDA5050_PORT:-8000}
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       PYTHONUNBUFFERED: "1"
+      # Canonical files served by the master (dry-run defaults; overridden in
+      # vda5050-real). DEMO_MODE selects which routes slice /map/grid + /robots
+      # surface for robot starts/home.
+      MASTER_MAP_FILE: /app/maps/gametl_demo.layout.yaml
+      MASTER_ROBOTS_FILE: /app/maps/robots.yaml
+      MAP_TF_FILE: /app/maps/map_transforms.yaml
+      DEMO_MODE: dry_run
       # Back-channel to the MAPF planner: master emits TaskComplete on order
       # completion so the planner drops the finished task from its batch.
       AMQP_HOST: ${AMQP_HOST:-amqp-broker}
       AMQP_PORT: ${AMQP_PORT:-5672}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python3 -c \"import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\\\"VDA5050_PORT\\\"]}/map')\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     restart: unless-stopped
 
-  # ===== Real physical demo (config/config-real.env overlay) =====
+  # ===== Real physical demo (--profile real-demo) =====
   # Same master, but validating/dispatching against the real-world coordinate
-  # map (AutoXing "From Mapping 40" frame = master map frame). Fill the
-  # placeholder coords in gametl_demo_map.real.json first — see
-  # docs/real-demo-node-coords.md.
+  # map (AutoXing "From Mapping 40" frame = master map frame). Real coords live
+  # in maps/gametl_demo_real.layout.yaml — see docs/real-demo-node-coords.md.
   vda5050-real:
     <<: *vda5050-master
     profiles: ["real-demo"]
+    command:
+      ["uv", "run", "python", "example_master_webserver.py", "--disable-state-log"]
     environment:
       <<: *vda5050-master-env
       VDA5050_MAP_ID: ${VDA5050_MAP_ID:-From Mapping 40}
-      MASTER_MAP_FILE: gametl_demo_map.real.json
+      DEMO_MODE: real
+      # Master-frame occupancy map served to the UI (/map/image + /map/image/meta).
+      # The real layout coords share this AutoXing image's frame, so the
+      # visualiser drapes it behind the nodes. clean4ui PNG shares the autoxing_map
+      # yaml's resolution/origin. Unset in dry-run (synthetic grid won't align).
+      MASTER_MAP_FILE: /app/maps/gametl_demo_real.layout.yaml
+      MASTER_MAP_IMAGE_FILE: /app/maps/autoxing_map_1095x1045-clean4ui.png
+      MASTER_MAP_IMAGE_META: /app/maps/autoxing-1_map/autoxing_map_1095x1045.yaml
     networks:
       rmf2-net:
         # Other services reach the master as "vda5050" in both profiles.
         aliases: [vda5050]
 
-  # Real adapters: no --dry-run, so they drive the actual robots through
-  # autoxing_bridge / reeman_bridge. On startup each adapter switches its robot
-  # to the demo map under autoxing_map/ or reeman_map/ (see ensure_onboard_map.py).
-  autoxing-adapter-real:
+  # Real adapters (profile real-demo): same robot_id service names as dry-run.
+  autoxing-1-real:
     profiles: ["real-demo"]
+    hostname: autoxing-1
     build:
       context: .
       dockerfile: docker/vda5050.Dockerfile
@@ -278,27 +340,29 @@ services:
         source /opt/ros/jazzy/setup.bash
         source /vda_ws/install/setup.bash
         uv sync
-        uv run python3 example_autoxing_adapter_client.py
+        uv run python3 example_autoxing_adapter_client.py --disable-state-log
     depends_on:
       mqtt-broker:
         condition: service_started
+      vda5050-real:
+        condition: service_healthy
     networks:
       - rmf2-net
     environment:
       PYTHONUNBUFFERED: "1"
+      # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+      # resolves manufacturer/serial/endpoint/map/transform from the master.
+      ROBOT_ID: autoxing-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
-      VDA5050_MAP_ID: ${VDA5050_MAP_ID:-From Mapping 40}
-      AUTOXING_ONBOARD_MAP_ID: ${AUTOXING_ONBOARD_MAP_ID:-27}
-      AUTOXING_ONBOARD_MAP_NAME: ${AUTOXING_ONBOARD_MAP_NAME:-From Mapping 40}
-      # AutoXing robot REST, e.g. http://<robot-ip>:8090.
-      AUTOXING_BASE_URL: ${AUTOXING_BASE_URL:-}
-      MAP_TF_CACHE_PATH: /data/reeman_to_autoxing_tf.json
+      MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
+      MAP_TF_CACHE_DIR: /data
     volumes:
       - reeman-map-tf:/data:ro
     restart: unless-stopped
 
-  reeman-adapter-real:
+  reeman-1-real:
     profiles: ["real-demo"]
+    hostname: reeman-1
     build:
       context: .
       dockerfile: docker/vda5050.Dockerfile
@@ -309,64 +373,96 @@ services:
         source /opt/ros/jazzy/setup.bash
         source /vda_ws/install/setup.bash
         uv sync
-        uv run python3 example_reeman_adapter_client.py
+        uv run python3 example_reeman_adapter_client.py --disable-state-log
     depends_on:
       mqtt-broker:
         condition: service_started
+      vda5050-real:
+        condition: service_healthy
     networks:
       - rmf2-net
     environment:
       PYTHONUNBUFFERED: "1"
+      # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+      # resolves manufacturer/serial/endpoint/map/transform from the master.
+      ROBOT_ID: reeman-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
-      VDA5050_MAP_ID: ${VDA5050_MAP_ID:-From Mapping 40}
-      REEMAN_ONBOARD_MAP_NAME: ${REEMAN_ONBOARD_MAP_NAME:-886d396851aa60b150419998b0a56e59}
-      # Reeman->AutoXing transform source (skips waypoint calibration). The two
-      # robots localize on their own native maps (autoxing_map/, reeman_map/),
-      # whose frames do NOT coincide (~177deg + (1.33, 1.99)m per image
-      # registration). Default MAP_TF_MODE=file so the adapter reads the
-      # committed map_transforms.yaml (master frame + per-adapter robot->master)
-      # even if the stack is launched without config-real.env — MAP_TF_ADAPTER
-      # picks this adapter's entry. The OLD default (static + zero MAP_TF_STATIC_*)
-      # was an identity transform, which silently published raw Reeman-frame
-      # coords under the master map_id. Set MAP_TF_MODE=static to use the
-      # MAP_TF_STATIC_* offsets below, or unset it for live nudged calibration
-      # via AUTOXING_BASE_URL.
+      MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       MAP_TF_MODE: ${MAP_TF_MODE:-file}
-      MAP_TF_FILE: ${MAP_TF_FILE:-map_transforms.yaml}
-      MAP_TF_ADAPTER: ${MAP_TF_ADAPTER:-reeman}
+      MAP_TF_FILE: ${MAP_TF_FILE:-/app/map_transforms.yaml}
       MAP_TF_STATIC_TX: ${MAP_TF_STATIC_TX:-0}
       MAP_TF_STATIC_TY: ${MAP_TF_STATIC_TY:-0}
       MAP_TF_STATIC_THETA: ${MAP_TF_STATIC_THETA:-0}
-      AUTOXING_BASE_URL: ${AUTOXING_BASE_URL:-}
-      # Reeman robot host; falls back to spellbook CONSTANTS.yml when empty.
-      REEMAN_ROBOT_IP: ${REEMAN_ROBOT_IP:-}
-      MAP_TF_CACHE_PATH: /data/reeman_to_autoxing_tf.json
+      MAP_TF_CACHE_DIR: /data
     volumes:
       - reeman-map-tf:/data
+      - ./maps/map_transforms.yaml:/app/map_transforms.yaml:ro
+      - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
     restart: unless-stopped
 
-  ui:
-    build:
-      context: src/rmf2-ui-gametl
-      dockerfile: Dockerfile
-      args:
-        SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
-        VDA5050_PORT: ${VDA5050_PORT:-8000}
-        TASK_ORCHESTRATOR_PORT: ${TASK_ORCHESTRATOR_PORT:-2727}
-    image: rmf2-ui-dashboard:local
-    ports:
-      - "${UI_PORT:-3000}:${UI_PORT:-3000}"
-    depends_on:
-      scheduler:
-        condition: service_healthy
-    networks:
-      - rmf2-net
-    restart: unless-stopped
+  # reeman-2-blue-real:
+  #   profiles: ["real-demo"]
+  #   hostname: reeman-2-blue
+  #   build:
+  #     context: .
+  #     dockerfile: docker/vda5050.Dockerfile
+  #   entrypoint: ["/bin/bash", "-lc"]
+  #   working_dir: /vda_ws/src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean
+  #   command:
+  #     - |
+  #       source /opt/ros/jazzy/setup.bash
+  #       source /vda_ws/install/setup.bash
+  #       uv sync
+  #       uv run python3 example_reeman_adapter_client.py --disable-state-log
+  #   depends_on:
+  #     mqtt-broker:
+  #       condition: service_started
+  #     vda5050-real:
+  #       condition: service_healthy
+  #   networks:
+  #     - rmf2-net
+  #   environment:
+  #     PYTHONUNBUFFERED: "1"
+  #     # ROBOT_ID + MASTER_URL are the ONLY identity/config inputs; the adapter
+  #     # resolves manufacturer/serial/endpoint/map/transform from the master.
+  #     ROBOT_ID: reeman-2-blue
+  #     MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
+  #     MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
+  #     MAP_TF_MODE: ${MAP_TF_MODE:-file}
+  #     MAP_TF_FILE: ${MAP_TF_FILE:-/app/map_transforms.yaml}
+  #     MAP_TF_STATIC_TX: ${MAP_TF_STATIC_TX:-0}
+  #     MAP_TF_STATIC_TY: ${MAP_TF_STATIC_TY:-0}
+  #     MAP_TF_STATIC_THETA: ${MAP_TF_STATIC_THETA:-0}
+  #     MAP_TF_CACHE_DIR: /data
+  #   volumes:
+  #     - reeman-map-tf:/data
+  #     - ./maps/map_transforms.yaml:/app/map_transforms.yaml:ro
+  #     - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
+  #   restart: unless-stopped
+
+  # ui:
+  #   build:
+  #     context: src/rmf2-ui-gametl
+  #     dockerfile: Dockerfile
+  #     args:
+  #       SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
+  #       VDA5050_PORT: ${VDA5050_PORT:-8000}
+  #       TASK_ORCHESTRATOR_PORT: ${TASK_ORCHESTRATOR_PORT:-2727}
+  #       NGINX_PORT: ${NGINX_PORT:-80}
+  #   image: rmf2-ui-dashboard:local
+  #   ports:
+  #     - "${UI_PORT:-3000}:${NGINX_PORT:-80}"
+  #   depends_on:
+  #     scheduler:
+  #       condition: service_healthy
+  #   networks:
+  #     - rmf2-net
+  #   restart: unless-stopped
 
 networks:
   rmf2-net:
     driver: bridge
-    name: ${COMPOSE_PROJECT_NAME}_rmf2-net
+    name: rmf2_demo_gametl_rmf2-net
 volumes:
   scheduler-data:
   reeman-map-tf:

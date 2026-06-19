@@ -1,5 +1,0 @@
-Okay, so the goal right now is to get the task scheduler. So let's say a Python script, right? Let's use this task scheduler as it already has the fast API, uh, Swagger. So let's just have a endpoint that I can press on the scheduler. Let's say, Blue Ocean demo, and then that will publish. Get the a first. Get the location of the robot, of the two of them, the Reeman R E E M A N, and the Autosing so Auto and then X I N G. But because when we're doing a dry run, which is the first priority.
-
-The dry run. Let's just say it is according to the already done location, which is in the to do line one o six to one two eight, and that is the map. And we already made the  L I F map.
-
-After we already got the map, then I would like it to send the AMQP schedule to the task orchestrator. So this is the phase one. Do what you need to do to get this working, but also for the line changes. As for approval as usual, but plan first. Ask some questions all.

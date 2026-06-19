@@ -7,7 +7,7 @@
 # ///
 """Publish a demo Schedule payload to the RabbitMQ @RECEIVE@ fanout exchange.
 
-Run with uv (provisions pika automatically): ``uv run fixtures/send_schedule.py``.
+Run with uv (provisions pika automatically): ``uv run fixtures/run_send_schedule.py``.
 """
 
 import argparse
@@ -18,7 +18,7 @@ import sys
 try:
     import pika
 except ImportError:
-    print("pika missing — run with uv: uv run fixtures/send_schedule.py", file=sys.stderr)
+    print("pika missing — run with uv: uv run fixtures/run_send_schedule.py", file=sys.stderr)
     sys.exit(1)
 
 SCHEDULE_PAYLOAD = {

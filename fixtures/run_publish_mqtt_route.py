@@ -7,7 +7,7 @@
 # ///
 """Publish GameTL Autoxing L300 demo route order via MQTT.
 
-Run with uv (provisions paho-mqtt automatically): ``uv run fixtures/publish_mqtt_route.py``.
+Run with uv (provisions paho-mqtt automatically): ``uv run fixtures/run_publish_mqtt_route.py``.
 
 Adapted from src/vda5050_core_gametl/vda5050_core_py/autoxing-l300/publish_autoxing_l300_route.py
 """
@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 try:
     import paho.mqtt.client as mqtt
 except ImportError:
-    print("paho-mqtt missing — run with uv: uv run fixtures/publish_mqtt_route.py", file=sys.stderr)
+    print("paho-mqtt missing — run with uv: uv run fixtures/run_publish_mqtt_route.py", file=sys.stderr)
     sys.exit(1)
 
 ORDER_TOPIC = "uagv/v2/Autoxing/A001/order"

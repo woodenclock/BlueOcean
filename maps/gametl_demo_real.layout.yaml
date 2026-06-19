@@ -1,0 +1,190 @@
+# Canonical layout for the two-robot MAPF demo — REAL physical graph (ARTC site).
+#
+# SINGLE SOURCE OF TRUTH for the real map. The VDA5050 master loads this file
+# and serves it over HTTP (/map metric, /map/grid planner view), replacing the
+# old split between maps/gametl_demo_real.lif.yaml and
+# demo-june-blue-ocean/gametl_demo_map.real.json (and the scheduler's bundled
+# duplicate of the latter).
+#
+# Node ids are "col,row" grid strings: the planner derives its integer grid
+# straight from the id (no separate `grid:` field). x/y are the real-world
+# master-frame coordinates (AutoXing "From Mapping 40" map), hand-measured from
+# the ARTC site sketch. `map.id` is the VDA5050 map_id robots must have loaded
+# (the AutoXing onboard map name), NOT the planner label.
+#
+# Robot goals live in maps/robots.yaml (routes.real), NOT here. Real demo starts
+# come from live localization (/state), not config.
+#
+# Shape: 7-node corridor, intersection at 3,1 with a 2-node branch below
+# (3,0 then 2,-1), and the Reeman start stub 6,2 above the corridor's right
+# end 6,1. No blocked edges — the real space has no shortcut to block.
+#
+# 
+# Conflict story (same as the dry run): reeman crosses the intersection and
+# passes through autoxing's goal 4,2 (was 3,0) on the way to 3,1 (was 2,-1).
+#
+# Planner grid ids use row +4 offset (min row >= 0) so CBS accepts all
+# coordinates. Metric x/y are unchanged.
+
+map:
+  id: From Mapping 40
+  version: 1.0-artc-sketch
+  frame: From Mapping 40
+nodes:
+  1,7:
+    x: -5.0
+    y: -7.0
+    deviation: 0.25
+  1,8:
+    x: -12.35
+    y: -7.0
+    deviation: 0.25
+  2,7:
+    x: -3.6
+    y: -2.0
+    deviation: 0.25
+  3,7:
+    x: -3.6
+    y: 3.17
+    deviation: 0.25
+  4,7:
+    x: -3.6
+    y: 6.0
+    deviation: 0.25
+  5,7:
+    x: -3.6
+    y: 9.0
+    deviation: 0.25
+  6,7:
+    x: -3.8
+    y: 16.0
+    deviation: 0.25
+  7,7:
+    x: -3.8
+    y: 24.3
+    deviation: 0.25
+  7,8:
+    x: -9.0
+    y: 24.3
+    deviation: 0.25
+  3,6:
+    x: -2.5
+    y: 3.17
+    deviation: 0.25
+  3,5:
+    x: -0.6
+    y: 3.17
+    deviation: 0.25
+  2,5:   # rack — RackPoint 2 West
+    x: -0.6
+    y: 1.6
+    deviation: 0.25
+  3,4:   # rack — RackPoint 3 South
+    x: 1.5
+    y: 3.6
+    deviation: 0.25
+  1,9:
+    x: -19.7
+    y: -7.0
+    deviation: 0.25
+  2,9:
+    x: -19.7
+    y: -1.3
+    deviation: 0.25
+  3,9:
+    x: -19.7
+    y: 4.4
+    deviation: 0.25
+  3,10:  # rack — Human Zone Arm
+    x: -21.3
+    y: 4.4
+    deviation: 0.25
+  4,10:  # rack — Human Zone TV
+    x: -21.5
+    y: 6.8
+    deviation: 0.25
+  4,9:
+    x: -19.7
+    y: 6.8
+    deviation: 0.25
+  5,9:
+    x: -19.7
+    y: 12.63
+    deviation: 0.25
+  6,9:
+    x: -19.7
+    y: 18.47
+    deviation: 0.25
+  7,9:
+    x: -19.7
+    y: 24.3
+    deviation: 0.25
+  4,6:   # rack — RackPoint 1 East
+    x: -2.5
+    y: 5.3
+    deviation: 0.25
+
+edges:
+- - 1,7
+  - 2,7
+- - 2,7
+  - 3,7
+- - 3,7
+  - 4,7
+- - 3,7
+  - 3,6
+- - 3,5
+  - 3,7
+- - 4,7
+  - 5,7
+- - 5,7
+  - 6,7
+- - 6,7
+  - 7,7
+- - 7,7
+  - 7,8
+- - 7,8
+  - 7,9
+- - 1,7
+  - 1,8
+- - 1,8
+  - 1,9
+- - 1,9
+  - 2,9
+- - 2,9
+  - 3,9
+- - 3,9
+  - 3,10
+- - 3,9
+  - 4,9
+- - 4,9
+  - 4,10
+- - 4,9
+  - 5,9
+- - 5,9
+  - 6,9
+- - 6,9
+  - 7,9
+- - 3,6
+  - 3,5
+- - 3,5
+  - 2,5
+- - 3,5
+  - 3,4
+- - 3,6
+  - 4,6
+blocked_edges: []
+# Rack points (AutoXing pick/drop via rack-direct / goal_jacks): 2,5 · 3,10
+# Scheduler default RACK_NODES mirrors this (override via env
+# "3,4=3,5;2,5=3,5;4,6=3,6;3,10=3,9;4,10=4,9").
+racks:
+  3,4:
+    approach: 3,5   # RackPoint 3 South
+  2,5:
+    approach: 3,5   # RackPoint 2 West
+  4,6:
+    approach: 3,6   # RackPoint 1 East
+  3,10:
+    approach: 3,9   # Human Zone Arm
+  4,10:
+    approach: 4,9   # Human Zone TV

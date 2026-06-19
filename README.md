@@ -39,20 +39,7 @@ All repos below are checked out at `demo-june-blue-ocean`.
 - Docker + Docker Compose v2
 - [vcstool](https://github.com/dirk-thomas/vcstool): `pip install vcstool`
 
-## Quick Start
 
-```bash
-# 1. Clone this repo
-git clone https://github.com/GameTL/rmf2-demo && cd rmf2-demo
-
-# 2. Pull all five source repos into src/ (demo-june-blue-ocean on each)
-vcs import src < .repos
-
-# 3. Build and start everything
-docker compose up --build
-```
-
-Services come up in dependency order. Wait ~2 min for the ROS builds on first run.
 
 ## Access
 
@@ -75,14 +62,14 @@ them automatically — no `pip install` needed.
 
 ```bash
 # Publish a Schedule to the task orchestrator via AMQP
-uv run fixtures/send_schedule.py
+uv run fixtures/run_send_schedule.py
 
 # Publish a VDA5050 route order to the Autoxing L300 adapter via MQTT
-uv run fixtures/publish_mqtt_route.py
+uv run fixtures/run_publish_mqtt_route.py
 
 # Use --broker / --host flags when targeting a remote host:
-uv run fixtures/send_schedule.py --host <vm-ip>
-uv run fixtures/publish_mqtt_route.py --broker <vm-ip>
+uv run fixtures/run_send_schedule.py --host <vm-ip>
+uv run fixtures/run_publish_mqtt_route.py --broker <vm-ip>
 ```
 
 See `fixtures/demo_tasks.json` for raw payload reference.
@@ -101,8 +88,8 @@ rmf2-demo/
 │   ├── mosquitto.conf              # anonymous MQTT on 1883
 │   └── task_orchestrator.toml     # Docker-aware host overrides
 ├── fixtures/
-│   ├── send_schedule.py            # AMQP Schedule publisher
-│   ├── publish_mqtt_route.py       # MQTT VDA5050 route publisher
+│   ├── run_send_schedule.py            # AMQP Schedule publisher
+│   ├── run_publish_mqtt_route.py       # MQTT VDA5050 route publisher
 │   └── demo_tasks.json             # sample task/schedule payloads
 └── src/                            # populated by: vcs import src < .repos
     ├── rmf2-ui-gametl/

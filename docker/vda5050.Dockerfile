@@ -18,6 +18,8 @@ ENV VDA5050_PY=vda5050_core_gametl/vda5050_core_py
 WORKDIR ${VDA_WS}/src
 
 COPY src/vda5050_core_gametl/ vda5050_core_gametl/
+COPY maps/map_transform/ /opt/gametl/maps/map_transform/
+ENV PYTHONPATH=/opt/gametl/maps:${PYTHONPATH}
 
 WORKDIR ${VDA_WS}
 RUN apt-get update \

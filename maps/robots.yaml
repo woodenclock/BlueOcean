@@ -1,0 +1,63 @@
+# Canonical robot config — SINGLE SOURCE OF TRUTH for robot identity, onboard
+# maps, REST endpoints, and per-mode demo routes. The VDA5050 master loads this
+# file and serves it over HTTP (/robots).
+#
+# One unified id namespace:
+#   robot_id   the single id used by the scheduler / orchestrator / MAPF planner,
+#              the master /state + /robots, the UI, and the map_transforms.yaml
+#              adapter keys. (Replaces the old planner_id + fleet_id split.)
+# manufacturer + serial_number stay as the hardware identity — VDA5050 MQTT
+# topics are built from them (uagv/v2/<manufacturer>/<serial_number>/...).
+#
+# `endpoint` is each robot's direct REST base/host (moved here from config.env):
+#   Autoxing — full base URL incl. port, e.g. http://192.168.68.64:8090
+#   Reeman   — host or host:port (scheme added by consumers), e.g. 192.168.68.62
+# It is the single source of truth for /demo/direct-navigate + jack control.
+#
+# `routes.dry_run.start` doubles as the dry-run home node. Real demo starts come
+# from live robot localization (/state), not config — only goals are configured
+# under routes.real. Node ids reference the layout in maps/*.layout.yaml.
+# asset_dir is maps/<robot_id>_map.
+
+robots:
+  - robot_id: autoxing-1
+    manufacturer: Autoxing
+    serial_number: A001
+    endpoint: http://192.168.68.64:8090
+    onboard_map:
+      name: "From Mapping 40"
+      id: 27
+      asset_dir: maps/autoxing-1_map
+      note: "Reference (master) frame — layout x/y are measured in this frame (autoxing_map_1095x1045)."
+    routes:
+      dry_run: { start: "0,5", goal: "3,4" }
+      real:    { goal: "4,6" }
+
+  - robot_id: reeman-1
+    manufacturer: Reeman
+    serial_number: R001
+    endpoint: 192.168.68.62
+    onboard_map:
+      name: "1fa43762ca0bec4a673fb45d2dd544e8"
+      alias: "BlueOceanNeo"
+      asset_dir: maps/reeman-1_map
+      note: "On-robot name is an immutable hash (= map_id); only the alias is editable. The VDA5050 map_id 'From Mapping 40' comes from the adapter's VDA5050_MAP_ID env (master frame = AutoXing). Frame offset vs AutoXing via maps/map_transforms.yaml."
+    routes:
+      dry_run: { start: "5,6", goal: "4,4" }
+      real:    { goal: "3,6" }
+
+  # Second Reeman robot (not in use — uncomment to enable).
+  # Same manufacturer as reeman-1; distinguished by serial_number (R002) and
+  # robot_id (reeman-2-blue). Own onboard map + map_transforms.yaml entry.
+  # - robot_id: reeman-2-blue
+  #   manufacturer: Reeman
+  #   serial_number: R002
+  #   endpoint: 192.168.68.60
+  #   onboard_map:
+  #     name: "1fa43762ca0bec4a673fb45d2dd544e8"
+  #     alias: "BlueOceanNeo"
+  #     asset_dir: maps/reeman-2-blue_map
+  #     note: "Own native frame; offset vs AutoXing master via map_transforms.yaml adapters.reeman-2-blue."
+  #   routes:
+  #     dry_run: { start: "5,5", goal: "0,5" }
+  #     real:    { goal: "7,9" }

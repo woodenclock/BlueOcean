@@ -3,11 +3,12 @@
 # requires-python = ">=3.10"
 # dependencies = [
 #     "paho-mqtt",
+#     "pyyaml",
 # ]
 # ///
 """Subscribe to VDA5050 order topics and verify expected node sequences.
 
-Run with uv (provisions paho-mqtt automatically): ``uv run fixtures/verify_orders.py``.
+Run with uv (provisions paho-mqtt automatically): ``uv run fixtures/run_verify_orders.py``.
 """
 
 from __future__ import annotations
@@ -18,23 +19,40 @@ import os
 import sys
 import threading
 import time
+from pathlib import Path
 
 try:
     import paho.mqtt.client as mqtt
 except ImportError:
-    print("paho-mqtt missing — run with uv: uv run fixtures/verify_orders.py", file=sys.stderr)
+    print("paho-mqtt missing — run with uv: uv run fixtures/run_verify_orders.py", file=sys.stderr)
     raise SystemExit(1)
 
+import yaml
 
+ROBOTS_YAML = Path(__file__).resolve().parent.parent / "maps" / "robots.yaml"
+
+# Post-CBS resolved node sequences for the dry-run demo. Robots NOT listed here
+# are still received and printed, just without a pass/fail assertion (so adding a
+# robot to robots.yaml never breaks this script — fill in its sequence to assert).
 EXPECTED_PATHS = {
-    "autoxing": ["0,1", "1,1", "2,1", "3,1", "3,0"],
-    "reeman": ["5,2", "5,1", "4,1", "3,1", "3,0", "4,0"],
+    "autoxing-1": ["0,5", "1,5", "2,5", "3,5", "3,4"],
+    "reeman-1": ["5,6", "5,5", "4,5", "3,5", "3,4", "4,4"],
 }
 
-TOPIC_TO_ROBOT = {
-    "uagv/v2/Autoxing/A001/order": "autoxing",
-    "uagv/v2/Reeman/R001/order": "reeman",
-}
+
+def load_topic_map() -> dict[str, str]:
+    """`uagv/v2/<Manufacturer>/<Serial>/order` -> robot_id, from robots.yaml."""
+    data = yaml.safe_load(ROBOTS_YAML.read_text())
+    topics: dict[str, str] = {}
+    for r in data.get("robots", []):
+        mfr, serial = r.get("manufacturer"), r.get("serial_number")
+        rid = r.get("robot_id") or r.get("planner_id")
+        if mfr and serial and rid:
+            topics[f"uagv/v2/{mfr}/{serial}/order"] = rid
+    return topics
+
+
+TOPIC_TO_ROBOT = load_topic_map()
 
 
 def node_sequence(order: dict) -> list[str]:
@@ -61,8 +79,8 @@ def main() -> int:
     parser.add_argument(
         "--robots",
         nargs="*",
-        default=["autoxing", "reeman"],
-        help="Robots to wait for",
+        default=list(TOPIC_TO_ROBOT.values()),
+        help="Robots to wait for (default: all robot_ids in maps/robots.yaml)",
     )
     args = parser.parse_args()
 
@@ -106,13 +124,16 @@ def main() -> int:
     ok = True
     with lock:
         for robot_id in args.robots:
-            expected = EXPECTED_PATHS[robot_id]
+            expected = EXPECTED_PATHS.get(robot_id)
             actual = received.get(robot_id)
             if actual is None:
                 print(f"FAIL {robot_id}: no order received")
                 ok = False
                 continue
-            if actual == expected:
+            if expected is None:
+                # No assertion configured for this robot — report only.
+                print(f"INFO {robot_id}: {' -> '.join(actual)}  (no expected path set)")
+            elif actual == expected:
                 print(f"OK   {robot_id}: {' -> '.join(actual)}")
             else:
                 print(f"FAIL {robot_id}: expected {' -> '.join(expected)}")
