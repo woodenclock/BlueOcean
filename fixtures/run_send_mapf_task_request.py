@@ -68,6 +68,18 @@ def build_payload(
 
 
 def main() -> int:
+    # Peek at --mode so --robot-id choices come from robots.yaml (single parse pass).
+    mode_parser = argparse.ArgumentParser(add_help=False)
+    mode_parser.add_argument(
+        "--mode",
+        default="dry_run",
+        choices=("dry_run", "real"),
+    )
+    mode_args, _ = mode_parser.parse_known_args()
+    goals = load_robots(mode_args.mode)
+    robot_ids = tuple(goals)
+    default_robot = robot_ids[0] if robot_ids else None
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="localhost", help="RabbitMQ host")
     default_amqp_port = int(os.environ.get("AMQP_PORT", "5672"))
@@ -83,14 +95,19 @@ def main() -> int:
         choices=("dry_run", "real"),
         help="Which routes.<mode> goal to default to (from robots.yaml)",
     )
-    args, _ = parser.parse_known_args()
-    goals = load_robots(args.mode)
-    parser.add_argument(
-        "--robot-id",
-        default=next(iter(goals), "autoxing"),
-        choices=tuple(goals) or ("autoxing",),
-        help="Robot to send the task for (from robots.yaml robot_ids)",
-    )
+    if robot_ids:
+        parser.add_argument(
+            "--robot-id",
+            default=default_robot,
+            choices=robot_ids,
+            help="Robot to send the task for (from robots.yaml robot_ids)",
+        )
+    else:
+        parser.add_argument(
+            "--robot-id",
+            required=True,
+            help="Robot to send the task for (from robots.yaml robot_ids)",
+        )
     parser.add_argument(
         "--goal",
         default=None,
@@ -99,6 +116,7 @@ def main() -> int:
     parser.add_argument("--task-id", default=None, help="Optional fixed task UUID")
     args = parser.parse_args()
 
+    goals = load_robots(args.mode)
     goal = args.goal or goals.get(args.robot_id, "")
     payload = build_payload(args.robot_id, goal, args.task_id)
 
