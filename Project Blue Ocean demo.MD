@@ -170,6 +170,9 @@ See `docs/how-to-add-transform-new-map.md` for the full walkthrough.
 **System → VDA Visualiser** at [localhost:3000/system/vda-visualiser](http://localhost:3000/system/vda-visualiser).
 Live map + robot poses over `ws://localhost:8000/ws/state` (map once, then ~300 ms state).
 
+On the AutoXing robot card, **Pick rack** runs MAPF to the rack approach node, then
+spellbook `pick_rack` at the selected overlay (see `docs/how-to-jack-off-and-on.md`).
+
 Nodes are **not** configured in the UI. The visualiser draws the **JSON master
 map** the VDA5050 master loads at startup (`MASTER_MAP_FILE`) — same payload as
 `GET /map`. The LIF files (`maps/gametl_demo*.lif.yaml`) are planner-only: node

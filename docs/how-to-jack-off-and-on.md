@@ -81,20 +81,37 @@ curl -X POST http://localhost:8000/actions/jack/autoxing-1/down
 `direction` must be `up` or `down`. `robot_id` is the unified id
 (`reeman-1`, `reeman-2-blue`, `autoxing-1`).
 
-## 3) Rack pick/drop (AutoXing)
+## 3) Rack pick/drop (AutoXing) — MAPF + spellbook
 
-Use the **Pick rack** row on the AutoXing robot card (pickup **West** / putdown
-**FarNorth**, then **Pick rack**) or `POST /demo/pick-rack`. This runs the
-spellbook sequence: rack size detection → `align_with_rack` → jack up →
-`to_unload_point` → jack down at hardcoded onboard-map poses (no MAPF, no layout
-nodes). The jack badge on the card updates live via the master WebSocket.
+The **Pick rack** row on the AutoXing robot card runs **MAPF first** (navigate to
+the rack approach node), then **spellbook `pick_rack`** at the onboard overlay
+(align → jack up / unload → jack down). Mission legs are polled via master
+`/state` (VDA5050). The jack badge on the card updates live via the master
+WebSocket.
+
+```bash
+# MAPF to West approach (3,5), then spellbook pickup @ Rack_West
+curl -X POST http://localhost:8089/demo/navigate-mission \
+  -H 'Content-Type: application/json' \
+  -d '{"robot_id":"autoxing-1","goals":["3,5"],"goal_pickups":["Rack_West"],"dry_run":false}'
+
+curl http://localhost:8089/demo/mission/autoxing-1
+```
+
+Full loop (pick at West → drop at FarNorth):
+
+```bash
+curl -X POST http://localhost:8089/demo/navigate-mission \
+  -H 'Content-Type: application/json' \
+  -d '{"robot_id":"autoxing-1","goals":["3,5","4,9"],"goal_pickups":["Rack_West",null],"goal_putdowns":[null,"Rack_FarNorth"],"dry_run":false}'
+```
+
+**Spellbook-only** (no MAPF) — still available for bench testing:
 
 ```bash
 curl -X POST http://localhost:8089/demo/pick-rack \
   -H 'Content-Type: application/json' \
   -d '{"robot_id":"autoxing-1","pickup":"Rack_West","putdown":"Rack_FarNorth"}'
-
-curl http://localhost:8089/demo/mission/autoxing-1
 ```
 
 List hardcoded rack poses:
@@ -159,5 +176,5 @@ RACK_NODES="2,4=2,3;3,4=3,3"   # scheduler env
 - `maps/gametl_demo_real.layout.yaml` — `racks:` block (canonical rack list)
 - `autoxing_bridge/spellbook/pick_rack.py` — canonical spellbook (robot REST sequence)
 - `demo_routes/pick_rack.py` — thin scheduler wrapper (`POST /demo/pick-rack`)
-- `demo_routes/mission.py` — mission runner; legacy rack-direct + MAPF `goal_jacks`
+- `demo_routes/mission.py` — mission runner; MAPF `goal_pickups` / `goal_putdowns` + legacy `goal_jacks`
 - `example_master_webserver.py` — `/actions/jack`, `/state`, jack state

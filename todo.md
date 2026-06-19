@@ -1,1 +1,1 @@
-rack refactor mission at scheduler to vda5050 query 
+# demo-autoxing-pickup-plus-mapf — MAPF + spellbook pick_rack integrated on robot card UI
