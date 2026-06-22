@@ -36,7 +36,7 @@ robots:
   - robot_id: reeman-1
     manufacturer: Reeman
     serial_number: R001
-    endpoint: 192.168.68.62
+    endpoint: 192.168.68.60
     onboard_map:
       name: "1fa43762ca0bec4a673fb45d2dd544e8"
       alias: "BlueOceanNeo"

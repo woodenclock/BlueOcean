@@ -155,8 +155,9 @@ services:
         condition: service_healthy
 
   # Dry-run VDA5050 adapters: one per robot_id (autoxing-1, reeman-1).
-  # Service name == robot_id; cache file is <robot_id>_to_master_tf.json under
-  # MAP_TF_CACHE_DIR, resolved from master /robots — not hardcoded in compose.
+  # Service name == robot_id. ROBOT_ID + MASTER_URL are the only inputs; the
+  # adapter resolves identity/map/transform from the master (GET /robots,
+  # /transform) at startup — no per-robot config or transform files mounted.
   autoxing-1:
     profiles: ["dry-run"]
     build:
@@ -185,9 +186,6 @@ services:
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
-      MAP_TF_CACHE_DIR: /data
-    volumes:
-      - reeman-map-tf:/data:ro
     restart: unless-stopped
 
   reeman-1:
@@ -218,10 +216,6 @@ services:
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
-      MAP_TF_CACHE_DIR: /data
-    volumes:
-      - reeman-map-tf:/data
-      - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
     restart: unless-stopped
 
   # reeman-2-blue:
@@ -252,10 +246,6 @@ services:
   #     MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
   #     MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
   #     DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
-  #     MAP_TF_CACHE_DIR: /data
-  #   volumes:
-  #     - reeman-map-tf:/data
-  #     - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
   #   restart: unless-stopped
 
   vda5050: &vda5050-master
@@ -355,9 +345,6 @@ services:
       ROBOT_ID: autoxing-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
-      MAP_TF_CACHE_DIR: /data
-    volumes:
-      - reeman-map-tf:/data:ro
     restart: unless-stopped
 
   reeman-1-real:
@@ -388,16 +375,6 @@ services:
       ROBOT_ID: reeman-1
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
-      MAP_TF_MODE: ${MAP_TF_MODE:-file}
-      MAP_TF_FILE: ${MAP_TF_FILE:-/app/map_transforms.yaml}
-      MAP_TF_STATIC_TX: ${MAP_TF_STATIC_TX:-0}
-      MAP_TF_STATIC_TY: ${MAP_TF_STATIC_TY:-0}
-      MAP_TF_STATIC_THETA: ${MAP_TF_STATIC_THETA:-0}
-      MAP_TF_CACHE_DIR: /data
-    volumes:
-      - reeman-map-tf:/data
-      - ./maps/map_transforms.yaml:/app/map_transforms.yaml:ro
-      - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
     restart: unless-stopped
 
   # reeman-2-blue-real:
@@ -428,36 +405,26 @@ services:
   #     ROBOT_ID: reeman-2-blue
   #     MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
   #     MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
-  #     MAP_TF_MODE: ${MAP_TF_MODE:-file}
-  #     MAP_TF_FILE: ${MAP_TF_FILE:-/app/map_transforms.yaml}
-  #     MAP_TF_STATIC_TX: ${MAP_TF_STATIC_TX:-0}
-  #     MAP_TF_STATIC_TY: ${MAP_TF_STATIC_TY:-0}
-  #     MAP_TF_STATIC_THETA: ${MAP_TF_STATIC_THETA:-0}
-  #     MAP_TF_CACHE_DIR: /data
-  #   volumes:
-  #     - reeman-map-tf:/data
-  #     - ./maps/map_transforms.yaml:/app/map_transforms.yaml:ro
-  #     - ./maps/map_transform:/opt/gametl/maps/map_transform:ro
   #   restart: unless-stopped
 
-  # ui:
-  #   build:
-  #     context: src/rmf2-ui-gametl
-  #     dockerfile: Dockerfile
-  #     args:
-  #       SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
-  #       VDA5050_PORT: ${VDA5050_PORT:-8000}
-  #       TASK_ORCHESTRATOR_PORT: ${TASK_ORCHESTRATOR_PORT:-2727}
-  #       NGINX_PORT: ${NGINX_PORT:-80}
-  #   image: rmf2-ui-dashboard:local
-  #   ports:
-  #     - "${UI_PORT:-3000}:${NGINX_PORT:-80}"
-  #   depends_on:
-  #     scheduler:
-  #       condition: service_healthy
-  #   networks:
-  #     - rmf2-net
-  #   restart: unless-stopped
+  ui:
+    build:
+      context: src/rmf2-ui-gametl
+      dockerfile: Dockerfile
+      args:
+        SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
+        VDA5050_PORT: ${VDA5050_PORT:-8000}
+        TASK_ORCHESTRATOR_PORT: ${TASK_ORCHESTRATOR_PORT:-2727}
+        NGINX_PORT: ${NGINX_PORT:-80}
+    image: rmf2-ui-dashboard:local
+    ports:
+      - "${UI_PORT:-3000}:${NGINX_PORT:-80}"
+    depends_on:
+      scheduler:
+        condition: service_healthy
+    networks:
+      - rmf2-net
+    restart: unless-stopped
 
 networks:
   rmf2-net:
@@ -465,4 +432,3 @@ networks:
     name: rmf2_demo_gametl_rmf2-net
 volumes:
   scheduler-data:
-  reeman-map-tf:
