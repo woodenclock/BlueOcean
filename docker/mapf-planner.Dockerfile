@@ -1,5 +1,11 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
+# procps provides pgrep, used by the compose healthcheck for this headless
+# AMQP->plan->VDA5050 worker (no exposed port, so liveness == process alive).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        procps \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app/res_mapf
 
 COPY src/res_mapf_gametl/res_mapf /app/res_mapf
