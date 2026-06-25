@@ -36,6 +36,12 @@ services:
       - "${MQTT_PORT:-1883}:${MQTT_PORT:-1883}"
     networks:
       - rmf2-net
+    healthcheck:
+      test:
+        ["CMD-SHELL", "mosquitto_pub -p ${MQTT_PORT:-1883} -t healthcheck -m ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   amqp-broker:
     image: rabbitmq:3-management
@@ -110,9 +116,16 @@ services:
       amqp-broker:
         condition: service_healthy
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
     networks:
       - rmf2-net
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -fsS http://127.0.0.1:${TASK_ORCHESTRATOR_PORT:-2727}/health_check || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   # Real MAPF planning stack (no ROS): consumes amr_mapf TaskRequests from
   # AMQP, plans with MAPFCoordinator + CBS + PlanGenerator on the LIF map
@@ -141,6 +154,15 @@ services:
       AMQP_PORT: ${AMQP_PORT:-5672}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
     restart: unless-stopped
+    # Headless AMQP worker (no exposed port): liveness == the service process
+    # is still running. Inherited by mapf-planner-real via the anchor merge.
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pgrep -f blue_ocean_planner_service >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   # Real-demo planner: same image. Dry-run vs real topology is decided by WHICH
   # master it reaches (both via the "vda5050" alias) — vda5050-real serves the
@@ -173,7 +195,7 @@ services:
         uv run python3 example_autoxing_adapter_client.py --dry-run
     depends_on:
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
       vda5050:
         condition: service_healthy
     networks:
@@ -187,6 +209,15 @@ services:
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
     restart: unless-stopped
+    # Headless adapter (no exposed port): liveness == the client process runs.
+    # start_period covers the slow first boot (uv sync + ROS source).
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pgrep -f example_autoxing_adapter_client >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   reeman-1:
     profiles: ["dry-run"]
@@ -203,7 +234,7 @@ services:
         uv run python3 example_reeman_adapter_client.py --dry-run
     depends_on:
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
       vda5050:
         condition: service_healthy
     networks:
@@ -217,6 +248,15 @@ services:
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
       DRY_RUN_STEP_SECONDS: ${DRY_RUN_STEP_SECONDS:-2}
     restart: unless-stopped
+    # Headless adapter (no exposed port): liveness == the client process runs.
+    # start_period covers the slow first boot (uv sync + ROS source).
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pgrep -f example_reeman_adapter_client >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   # reeman-2-blue:
   #   profiles: ["dry-run"]
@@ -257,7 +297,7 @@ services:
       - "${VDA5050_PORT:-8000}:${VDA5050_PORT:-8000}"
     depends_on:
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
     networks:
       - rmf2-net
     # The master is the single map/transform/robots authority: mount the
@@ -333,7 +373,7 @@ services:
         uv run python3 example_autoxing_adapter_client.py --disable-state-log
     depends_on:
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
       vda5050-real:
         condition: service_healthy
     networks:
@@ -346,6 +386,14 @@ services:
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
     restart: unless-stopped
+    # Headless adapter (no exposed port): liveness == the client process runs.
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pgrep -f example_autoxing_adapter_client >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   reeman-1-real:
     profiles: ["real-demo"]
@@ -363,7 +411,7 @@ services:
         uv run python3 example_reeman_adapter_client.py --disable-state-log
     depends_on:
       mqtt-broker:
-        condition: service_started
+        condition: service_healthy
       vda5050-real:
         condition: service_healthy
     networks:
@@ -376,6 +424,14 @@ services:
       MQTT_BROKER: tcp://mqtt-broker:${MQTT_PORT:-1883}
       MASTER_URL: http://vda5050:${VDA5050_PORT:-8000}
     restart: unless-stopped
+    # Headless adapter (no exposed port): liveness == the client process runs.
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pgrep -f example_reeman_adapter_client >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   # reeman-2-blue-real:
   #   profiles: ["real-demo"]
@@ -425,6 +481,13 @@ services:
     networks:
       - rmf2-net
     restart: unless-stopped
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:${NGINX_PORT:-80}/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   rmf2-net:
