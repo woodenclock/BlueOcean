@@ -1,9 +1,9 @@
-# Real demo — ARTC node coordinates (AutoXing "From Mapping 40" frame)
+# Real demo — ARTC node coordinates (AutoXing "l1-artc" frame)
 
 > ARES PRIVATE — internal demo data.
 
 The real demo runs on its **own topology**, separate from the dry-run grid:
-`maps/gametl_demo_real.layout.yaml` (loaded and served by the VDA5050 master).
+`maps/<VDA5050_MAP_ID>/real.layout.yaml` (loaded and served by the VDA5050 master).
 Coordinates below were read from the hand-measured sketch (`ARTC.heic`,
 2026-06-12) of the AutoXing map.
 
@@ -44,15 +44,15 @@ See [`how-to-add-node-to-map.md`](./how-to-add-node-to-map.md#mapf--cbs-grid-rul
 | 3,0 |  0.0 |  6.0 | AutoXing goal (Reeman passes through) |
 | 2,0 |  0.0 |  2.0 | Reeman goal |
 
-To change a coordinate: edit `maps/gametl_demo_real.layout.yaml`, then restart
+To change a coordinate: edit `maps/<VDA5050_MAP_ID>/real.layout.yaml`, then restart
 the master — `docker compose --profile real-demo up -d vda5050-real`
 (no rebuild needed; `maps/` is mounted). The node id `"col,row"` encodes the
 planner grid; `x`/`y` are the metric master-frame coords the master dispatches.
 
 Pre-run checklist:
 
-- [ ] The VDA5050 `map_id` **"From Mapping 40"** comes from `map.id` in
-      `maps/gametl_demo_real.layout.yaml`; the adapters fetch it from the master
+- [ ] The VDA5050 `map_id` **"l1-artc"** comes from `map.id` in
+      `maps/<VDA5050_MAP_ID>/real.layout.yaml`; the adapters fetch it from the master
       `/map` (override with `VDA5050_MAP_ID`). At startup each adapter switches
       its robot to its `onboard_map` from the master `/robots` —
       `maps/autoxing-1_map/` (AutoXing id 27) or `maps/reeman-1_map/` (Reeman hash
@@ -61,7 +61,7 @@ Pre-run checklist:
 - [ ] If the two robots' map frames do not coincide, set the Reeman static
       offset via `MAP_TF_STATIC_TX` / `MAP_TF_STATIC_TY` / `MAP_TF_STATIC_THETA`
       (defaults 0 = identity) on `reeman-adapter-real`.
-- [ ] Each robot's REST host set in `maps/robots.yaml` (`endpoint` per robot:
+- [ ] Each robot's REST host set in `maps/<VDA5050_MAP_ID>/robots.yaml` (`endpoint` per robot:
       `autoxing-1`, `reeman-1`, `reeman-2-blue`) — the single source of truth.
 - [ ] Each robot localized on its onboard map; the scheduler snaps the live
       `/state` pose to the nearest map node at run time (limit `SNAP_MAX_DIST_M`,

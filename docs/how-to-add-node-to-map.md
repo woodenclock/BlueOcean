@@ -4,7 +4,7 @@
 > sketch; do not paste live robot IPs or addresses into this file).
 
 This page is the quick recipe for adding a **new node** to the real-demo
-topology. The whole map is one file — `maps/gametl_demo_real.layout.yaml` — and
+topology. The whole map is one file — `maps/<VDA5050_MAP_ID>/real.layout.yaml` — and
 the planner derives its grid straight from the node ids, so there is no separate
 grid to maintain. Full coordinate table lives in
 [`real-demo-node-coords.md`](./real-demo-node-coords.md).
@@ -13,9 +13,9 @@ Audience: whoever extends the floor graph between runs.
 
 ## Files to change
 
-- `maps/gametl_demo_real.layout.yaml` — add the node under `nodes:` and an edge under `edges:`.
+- `maps/<VDA5050_MAP_ID>/real.layout.yaml` — add the node under `nodes:` and an edge under `edges:`.
 - `docs/real-demo-node-coords.md` — add the new node's row/diagram entry so the table stays the source of truth.
-- `maps/robots.yaml` — (only if the node is a route start/goal) point `routes.real` at it.
+- `maps/<VDA5050_MAP_ID>/robots.yaml` — (only if the node is a route start/goal) point `routes.real` at it.
 
 ---
 
@@ -30,12 +30,12 @@ nodes:
   comma-separated, **no spaces**. The MAPF planner parses this id directly into
   `(int, int)`; there is no separate `grid:` field.
 - **`x` / `y`** — real-world metres in the **master frame** (AutoXing
-  "From Mapping 40"). These are what the VDA5050 master dispatches.
+  "l1-artc"). These are what the VDA5050 master dispatches.
 - **`deviation`** — localization tolerance in metres (use `0.25` on dry-run maps;
   `1.0` matches the existing real-demo nodes).
 
 > Reeman coordinates are **not** entered here — the adapter transforms the
-> master-frame node into Reeman's frame via `maps/map_transforms.yaml`.
+> master-frame node into Reeman's frame via `maps/<VDA5050_MAP_ID>/map_transforms.yaml`.
 
 ---
 
@@ -113,9 +113,9 @@ edge from `"0,3"` without `"1,3"`).
 
 Read it off the ARTC sketch / [`real-demo-node-coords.md`](./real-demo-node-coords.md),
 or take it from a live AutoXing pose. Coordinates **must** be in the AutoXing
-"From Mapping 40" frame.
+"l1-artc" frame.
 
-### 3. Add the node  → `maps/gametl_demo_real.layout.yaml`
+### 3. Add the node  → `maps/<VDA5050_MAP_ID>/real.layout.yaml`
 
 ```yaml
 nodes:
@@ -155,7 +155,7 @@ source of truth.
 
 ### 6. (Optional) Use it as a goal
 
-Route endpoints live in `maps/robots.yaml` (`routes.real`), **not** in the
+Route endpoints live in `maps/<VDA5050_MAP_ID>/robots.yaml` (`routes.real`), **not** in the
 layout file. Point a route at the new node only if it is a demo goal:
 
 ```yaml
@@ -202,7 +202,7 @@ uv run fixtures/run_send_mapf_task_request.py --robot-id autoxing --goal 7,1
 ## Notes
 
 - This only touches the **real** demo. The dry-run grid is a separate file
-  (`maps/gametl_demo.layout.yaml`) but follows the same ±1 grid rule — see
+  (`maps/<VDA5050_MAP_ID>/dry_run.layout.yaml`) but follows the same ±1 grid rule — see
   how every dry-run edge steps one cell (`0,1`→`1,1`→`2,1`, never `0,1`→`2,1`).
 - The node id encodes the grid; `x`/`y` are only for dispatch. Keep the two
   consistent so the visualiser and the planner agree.

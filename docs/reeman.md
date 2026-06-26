@@ -20,9 +20,10 @@ and [`how-to-add-transform-new-map.md`](./how-to-add-transform-new-map.md).
 | `manufacturer` | `Reeman` |
 | `serial_number` | `R001` |
 | Onboard map name | `1fa43762ca0bec4a673fb45d2dd544e8` (alias: `BlueOceanNeo`) |
-| Robot IP env | `REEMAN_ROBOT_IP` in `config/config.env` |
+| Robot IP | `endpoint` in `maps/<VDA5050_MAP_ID>/robots.yaml` |
 
-All routes and onboard-map details live in `maps/robots.yaml`.
+All routes and onboard-map details live in `maps/<VDA5050_MAP_ID>/robots.yaml`
+(`VDA5050_MAP_ID` selects the floor — `AMAV-X` or `l1-artc` — in `.env`).
 
 ---
 
@@ -49,9 +50,9 @@ Spellbook scripts live in
 ## Frame transform
 
 The Reeman robot lives in its own map frame. All VDA5050 coordinates are in the
-**master frame** (AutoXing "From Mapping 40"). The adapter converts at dispatch
+**master frame** (AutoXing "l1-artc"). The adapter converts at dispatch
 and pose-mirroring time using a 2D similarity transform from
-`maps/map_transforms.yaml`.
+`maps/<VDA5050_MAP_ID>/map_transforms.yaml`.
 
 ```
 VDA5050 order (master frame) → to_robot(x, y) → POST /cmd/nav (Reeman frame)

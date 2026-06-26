@@ -46,7 +46,7 @@ jack.
 
 ## Per-robot REST (what the master calls)
 
-Set per robot by `endpoint` in `maps/robots.yaml`.
+Set per robot by `endpoint` in `maps/<VDA5050_MAP_ID>/robots.yaml`.
 
 - **AutoXing** — `POST {endpoint}/services/jack_up` / `/services/jack_down`,
   monitored via WS `/jack_state`. State set to `jacking_up` / `jacking_down`.
@@ -119,7 +119,7 @@ jack.
 ## Rack nodes
 
 Racks are where the auto-toggle fires. Default (mirrors
-`maps/gametl_demo_real.layout.yaml`):
+`maps/<VDA5050_MAP_ID>/real.layout.yaml`):
 
 | Rack | Approach (node before) | Area |
 | --- | --- | --- |
@@ -147,7 +147,7 @@ RACK_NODES="2,4=2,3;3,4=3,3"   # scheduler env
 
 ## Troubleshooting
 
-- **Jack didn't move** — check AutoXing `endpoint` in `maps/robots.yaml`; test
+- **Jack didn't move** — check AutoXing `endpoint` in `maps/<VDA5050_MAP_ID>/robots.yaml`; test
   `POST {endpoint}/services/jack_up`.
 - **Reeman rack leg did nothing** — expected; Reeman skips jack in this demo.
 - **Dry-run** — with no robot endpoint, jack state only flips in master memory
@@ -156,7 +156,7 @@ RACK_NODES="2,4=2,3;3,4=3,3"   # scheduler env
 ## Related
 
 - `docs/real-demo-node-coords.md` — node coordinates / map frame
-- `maps/gametl_demo_real.layout.yaml` — `racks:` block (canonical rack list)
+- `maps/<VDA5050_MAP_ID>/real.layout.yaml` — `racks:` block (canonical rack list)
 - `autoxing_bridge/spellbook/pick_rack.py` — canonical spellbook (robot REST sequence)
 - `demo_routes/pick_rack.py` — thin scheduler wrapper (`POST /demo/pick-rack`)
 - `demo_routes/mission.py` — mission runner; legacy rack-direct + MAPF `goal_jacks`

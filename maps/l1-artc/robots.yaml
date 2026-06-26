@@ -1,6 +1,7 @@
-# Canonical robot config — SINGLE SOURCE OF TRUTH for robot identity, onboard
-# maps, REST endpoints, and per-mode demo routes. The VDA5050 master loads this
-# file and serves it over HTTP (/robots).
+# Canonical robot config for the L1 floor — SINGLE SOURCE OF TRUTH for robot
+# identity, onboard maps, REST endpoints, and per-mode demo routes. The VDA5050
+# master loads this file (selected by VDA5050_MAP_ID=l1-artc) and serves it over HTTP
+# (/robots).
 #
 # One unified id namespace:
 #   robot_id   the single id used by the scheduler / orchestrator / MAPF planner,
@@ -16,8 +17,10 @@
 #
 # `routes.dry_run.start` doubles as the dry-run home node. Real demo starts come
 # from live robot localization (/state), not config — only goals are configured
-# under routes.real. Node ids reference the layout in maps/*.layout.yaml.
-# asset_dir is maps/<robot_id>_map.
+# under routes.real. Node ids reference maps/l1-artc/real.layout.yaml (real) and
+# maps/l1-artc/dry_run.layout.yaml (dry-run).
+# asset_dir is maps/l1-artc/<robot_id>_map. Frame offsets vs the AutoXing master live
+# in maps/l1-artc/map_transforms.yaml.
 
 robots:
   - robot_id: autoxing-1
@@ -25,9 +28,9 @@ robots:
     serial_number: A001
     endpoint: http://192.168.68.64:8090
     onboard_map:
-      name: "From Mapping 40"
+      name: "l1-artc"
       id: 27
-      asset_dir: maps/autoxing-1_map
+      asset_dir: maps/l1-artc/autoxing-1_map
       note: "Reference (master) frame — layout x/y are measured in this frame (autoxing_map_1095x1045)."
     routes:
       dry_run: { start: "0,5", goal: "3,4" }
@@ -40,8 +43,8 @@ robots:
     onboard_map:
       name: "1fa43762ca0bec4a673fb45d2dd544e8"
       alias: "BlueOceanNeo"
-      asset_dir: maps/reeman-1_map
-      note: "On-robot name is an immutable hash (= map_id); only the alias is editable. The VDA5050 map_id 'From Mapping 40' comes from the adapter's VDA5050_MAP_ID env (master frame = AutoXing). Frame offset vs AutoXing via maps/map_transforms.yaml."
+      asset_dir: maps/l1-artc/reeman-1_map
+      note: "On-robot name is an immutable hash (= map_id); only the alias is editable. The VDA5050 map_id 'l1-artc' comes from the adapter's VDA5050_MAP_ID env (master frame = AutoXing). Frame offset vs AutoXing via maps/map_transforms.yaml."
     routes:
       dry_run: { start: "5,6", goal: "4,4" }
       real:    { goal: "3,6" }
@@ -56,7 +59,7 @@ robots:
   #   onboard_map:
   #     name: "1fa43762ca0bec4a673fb45d2dd544e8"
   #     alias: "BlueOceanNeo"
-  #     asset_dir: maps/reeman-2-blue_map
+  #     asset_dir: maps/l1-artc/reeman-2-blue_map
   #     note: "Own native frame; offset vs AutoXing master via map_transforms.yaml adapters.reeman-2-blue."
   #   routes:
   #     dry_run: { start: "5,5", goal: "0,5" }

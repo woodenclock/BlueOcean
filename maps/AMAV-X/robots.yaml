@@ -1,0 +1,48 @@
+# Canonical robot config for the L3 / AMAV-X floor — SINGLE SOURCE OF TRUTH for
+# robot identity, onboard maps, REST endpoints, and per-mode demo routes. The
+# VDA5050 master loads this file (selected by VDA5050_MAP_ID=AMAV-X) and serves it
+# over HTTP (/robots).
+#
+# One unified id namespace:
+#   robot_id   the single id used by the scheduler / orchestrator / MAPF planner,
+#              the master /state + /robots, the UI, and the map_transforms.yaml
+#              adapter keys. (Replaces the old planner_id + fleet_id split.)
+# manufacturer + serial_number stay as the hardware identity — VDA5050 MQTT
+# topics are built from them (uagv/v2/<manufacturer>/<serial_number>/...).
+#
+# `endpoint` is each robot's direct REST base/host (moved here from config.env):
+#   Autoxing — full base URL incl. port, e.g. http://192.168.68.64:8090
+#   Reeman   — host or host:port (scheme added by consumers), e.g. 192.168.68.62
+# It is the single source of truth for /demo/direct-navigate + jack control.
+#
+# `routes.dry_run.start` doubles as the dry-run home node. Real demo starts come
+# from live robot localization (/state), not config — only goals are configured
+# under routes.real. Node ids reference maps/AMAV-X/real.layout.yaml.
+# asset_dir is maps/AMAV-X/<robot_id>_map. Frame offsets vs the AMAV-X master
+# live in maps/AMAV-X/map_transforms.yaml.
+
+robots:
+  - robot_id: autoxing-1
+    manufacturer: Autoxing
+    serial_number: A001
+    endpoint: http://192.168.68.64:8090
+    onboard_map:
+      name: "AMAV-X"
+      id: 27
+      asset_dir: maps/AMAV-X/autoxing-1_map
+      note: "Reference (master) frame — layout x/y are measured in this AMAV-X frame."
+
+  - robot_id: reeman-2-blue
+    manufacturer: Reeman
+    serial_number: R002
+    endpoint: 192.168.68.60
+    onboard_map:
+      name: "Level3_1"
+      alias: "Level3_1"
+      asset_dir: maps/AMAV-X/reeman-2-blue_map
+      note: "Own native Level3_1 frame; offset vs the AMAV-X master via map_transforms.yaml adapters.reeman-2-blue."
+
+  # reeman-1 is not part of the L3 / AMAV-X floor (no onboard map dir, no
+  # map_transforms.yaml adapter here). It lives on the L1 floor — see
+  # maps/l1-artc/robots.yaml. Uncomment + add a reeman-1_map dir and a tf adapter to
+  # bring it onto this floor.

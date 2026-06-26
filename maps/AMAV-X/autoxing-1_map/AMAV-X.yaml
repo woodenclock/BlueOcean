@@ -1,0 +1,42 @@
+image: AMAV-X.png
+resolution: 0.05
+origin:
+- -17.3
+- -5.95
+- 0.0
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+axbot:
+  id: 31
+  uid: 6a3c989647b7f53a9f8025fb
+  map_name: AMAV-X
+  map_version: 1
+  overlays_version: 3
+  create_time: 1782356117
+  last_modified_time: 1782356514
+  image_url: http://192.168.68.64:8090/maps/31.png
+  thumbnail_url: http://192.168.68.64:8090/maps/31/thumbnail
+  pbstream_url: http://192.168.68.64:8090/maps/31.pbstream
+  overlays: '{"type": "FeatureCollection", "features": [{"id": "6a3c97535894bb9e4397abc6",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [0.0003185306842934155,
+    -0.4993204905518041]}, "properties": {"dockingPointId": "6a3c9753348bfc9e02d456d8",
+    "endType": "0", "iconYaw": 360, "mapOverlay": true, "startType": "0", "type":
+    "36", "yaw": "90"}}, {"id": "6a3c9753348bfc9e02d456d8", "type": "Feature", "geometry":
+    {"type": "Point", "coordinates": [0.00031853068429330537, 0.3999998731727339]},
+    "properties": {"deviceIds": ["L352511d06791Lx"], "dockingPointId": "6a3c97535894bb9e4397abc6",
+    "endType": "0", "iconYaw": 180, "mapOverlay": true, "name": "Charging Station",
+    "startType": "0", "type": "9", "yaw": 270}}, {"id": "6a3c98a558e38949de86ffa4",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-0.145, 4.9075]},
+    "properties": {"endType": "0", "iconYaw": 151, "mapOverlay": true, "name": "Standby
+    Point", "startType": "0", "type": "10", "yaw": 299}}, {"id": "6a3c98fd7f637f3b4e6e23bb",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [2.1225, 7.285000000000001]},
+    "properties": {"endType": "0", "iconYaw": 179, "mapOverlay": true, "name": "SPoint2",
+    "startType": "0", "type": "10", "yaw": 271}}, {"id": "6a3c99b87c9250be370faf51",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-9.8575, 7.1275]},
+    "properties": {"iconYaw": 91, "mapOverlay": true, "name": "Point1", "type": "11",
+    "yaw": 359}}, {"id": "6a3c990fcadeb40f11b5741a", "type": "Feature", "geometry":
+    {"type": "LineString", "coordinates": [[-10.621457475394891, 8.827646039293313],
+    [-0.4064112090418348, 8.722897627109205], [0.4483350019768295, 9.576595277138722],
+    [0.2891164936613677, 14.326927174010962], [0.1518034986247585, 26.435955016097523]]},
+    "properties": {"lineType": "2", "mapOverlay": true}}]}'

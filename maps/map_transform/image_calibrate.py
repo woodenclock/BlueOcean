@@ -8,18 +8,21 @@ known — both maps are 0.05 m/px), then compose the pixel transform with each
 map's pixel→world geometry to get the metric Reeman→AutoXing similarity
 transform in the exact ``MapTransform`` convention.
 
-Usage (from maps/): the master frame is one robot's map dir, and each other
-robot map dir is registered onto it. robot_id == folder name minus ``_map``,
-and one ``adapters.<robot_id>`` entry is written per robot:
+Usage (from maps/): pick the floor with ``--map-id`` (or the VDA5050_MAP_ID env);
+map dirs are then relative to maps/<map-id>/. The master frame is one robot's map
+dir, and each other robot map dir is registered onto it. robot_id == folder name
+minus ``_map``, and one ``adapters.<robot_id>`` entry is written per robot:
 
     uv run python -m map_transform.image_calibrate \
+        --map-id l1-artc \
         --master-map-dir autoxing-1_map \
         --robot-map-dir reeman-1_map \
         --robot-map-dir reeman-2-blue_map
 
 Writes a per-robot calibration cache (offline fallback) + an overlay png to
-eyeball the alignment, and merges into maps/map_transforms.yaml (other adapters
-preserved). map_name per robot is read from maps/robots.yaml onboard_map.name.
+eyeball the alignment, and merges into maps/<map-id>/map_transforms.yaml (other
+adapters preserved). map_name per robot is read from
+maps/<map-id>/robots.yaml onboard_map.name.
 """
 
 from __future__ import annotations
@@ -27,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -37,15 +41,21 @@ import yaml
 
 from map_transform.transform import (
     DEFAULT_CACHE_PATH,
-    DEFAULT_TRANSFORM_FILE,
     MapTransform,
     save_cache,
 )
 
 HERE = Path(__file__).resolve().parent.parent
-# This module lives at maps/map_transform/, so HERE IS the repo's maps/ dir —
-# the onboard occupancy maps + map_transforms.yaml live alongside it.
-MAPS_DIR = HERE
+# This module lives at maps/map_transform/, so HERE is the repo's maps/ dir. The
+# per-floor data (robots.yaml, onboard *_map dirs, map_transforms.yaml) lives in
+# maps/<VDA5050_MAP_ID>/ — selected by --map-id or the VDA5050_MAP_ID env
+# (default matches .env / docker-compose). VDA5050_MAP_ID is both the master map
+# id and the floor dir name. The tooling + cache (CACHE_DIR) stay at maps/ root.
+DEFAULT_MAP_ID = os.environ.get("VDA5050_MAP_ID", "AMAV-X")
+CACHE_DIR = HERE / "map_transform" / "out"
+# MAPS_DIR is the active floor dir; main() may rebind it from --map-id before
+# any path is resolved.
+MAPS_DIR = HERE / DEFAULT_MAP_ID
 
 
 def _log(msg: str) -> None:
@@ -335,30 +345,42 @@ def _write_overlay(robot: GeoMap, master: GeoMap, px_tf: np.ndarray, side: int, 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
+        "--map-id",
+        dest="map_id",
+        default=DEFAULT_MAP_ID,
+        help="Active map floor under maps/ = the VDA5050 map id (e.g. AMAV-X, "
+        "l1-artc). Onboard map dirs, robots.yaml, and map_transforms.yaml are "
+        f"read from maps/<map-id>/ (default: {DEFAULT_MAP_ID}, from the "
+        "VDA5050_MAP_ID env).",
+    )
+    ap.add_argument(
         "--master-map-dir",
         type=Path,
-        default=MAPS_DIR / "autoxing-1_map",
-        help="The master-frame robot's map dir; its robot_id (dir minus _map) is "
-        "the identity entry and master_frame in map_transforms.yaml.",
+        default=Path("autoxing-1_map"),
+        help="The master-frame robot's map dir (relative to the floor dir). Its "
+        "robot_id (dir minus _map) is the identity entry and master_frame in "
+        "map_transforms.yaml.",
     )
     ap.add_argument(
         "--robot-map-dir",
         dest="robot_map_dirs",
         action="append",
         type=Path,
-        help="A robot map dir to register onto the master (repeatable). robot_id "
-        "is the folder name minus the _map suffix. Default: reeman-1_map.",
+        help="A robot map dir to register onto the master (repeatable, relative to "
+        "the floor dir). robot_id is the folder name minus the _map suffix. "
+        "Default: reeman-1_map.",
     )
     ap.add_argument(
         "--out-yaml",
         type=Path,
-        default=DEFAULT_TRANSFORM_FILE,
-        help=f"declarative transform file to merge into (default: {DEFAULT_TRANSFORM_FILE})",
+        default=None,
+        help="declarative transform file to merge into "
+        "(default: maps/<map-id>/map_transforms.yaml)",
     )
     ap.add_argument(
         "--cache-dir",
         type=Path,
-        default=MAPS_DIR / "map_transform" / "out",
+        default=CACHE_DIR,
         help="Dir for per-robot offline cache (<robot_id>_to_master_tf.json) + overlays "
         "(gitignored).",
     )
@@ -366,8 +388,13 @@ def main() -> int:
     ap.add_argument("--no-yaml", action="store_true", help="don't write the transform YAML")
     args = ap.parse_args()
 
+    # Rebind the active floor dir before any path is resolved.
+    global MAPS_DIR
+    MAPS_DIR = HERE / args.map_id
+    out_yaml = args.out_yaml or (MAPS_DIR / "map_transforms.yaml")
+
     master_dir = _resolve_dir(args.master_map_dir)
-    robot_dirs = [_resolve_dir(d) for d in (args.robot_map_dirs or [MAPS_DIR / "reeman-1_map"])]
+    robot_dirs = [_resolve_dir(d) for d in (args.robot_map_dirs or [Path("reeman-1_map")])]
 
     onboard = _onboard_map_names()
     master_id = _robot_id_from_dir(master_dir)
@@ -400,7 +427,7 @@ def main() -> int:
             save_cache(tf, args.cache_dir / f"{rid}_to_master_tf.json")
         if not args.no_yaml:
             write_transform_file(
-                args.out_yaml,
+                out_yaml,
                 master_frame=master_frame,
                 master_key=master_id,
                 adapter_key=rid,

@@ -8,7 +8,7 @@
 #
 # Node ids are "col,row" grid strings: the planner derives its integer grid
 # straight from the id (no separate `grid:` field). x/y are the real-world
-# master-frame coordinates (AutoXing "From Mapping 40" map), hand-measured from
+# master-frame coordinates (AutoXing "l1-artc" map), hand-measured from
 # the ARTC site sketch. `map.id` is the VDA5050 map_id robots must have loaded
 # (the AutoXing onboard map name), NOT the planner label.
 #
@@ -27,9 +27,9 @@
 # coordinates. Metric x/y are unchanged.
 
 map:
-  id: From Mapping 40
+  id: l1-artc
   version: 1.0-artc-sketch
-  frame: From Mapping 40
+  frame: l1-artc
 nodes:
   1,7:
     x: -5.0

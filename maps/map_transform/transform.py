@@ -38,16 +38,21 @@ DEFAULT_CACHE_PATH = Path(
         Path.home() / ".cache" / "gametl" / "reeman_to_autoxing_tf.json",
     )
 )
+# Active map floor: VDA5050_MAP_ID is both the master map id AND the floor dir
+# name (per-floor data lives in maps/<VDA5050_MAP_ID>/). Mirrors the knob in
+# .env / docker-compose; default is the AMAV-X floor.
+DEFAULT_MAP_ID = os.environ.get("VDA5050_MAP_ID", "AMAV-X")
 # Declarative transform file (master frame + per-adapter robot->master). Read
-# when MAP_TF_MODE=file; written by image_calibrate. Lives in the repo's maps/
-# dir alongside the onboard maps it is derived from, but MAP_TF_FILE overrides
-# (compose sets it to the mounted /app/maps/map_transforms.yaml).
+# when MAP_TF_MODE=file; written by image_calibrate. Lives in the floor dir
+# maps/<VDA5050_MAP_ID>/ alongside the onboard maps it is derived from, but
+# MAP_TF_FILE overrides (compose sets it to the mounted
+# /app/maps/<VDA5050_MAP_ID>/map_transforms.yaml).
 DEFAULT_TRANSFORM_FILE = Path(
     os.environ.get(
         # This module lives at maps/map_transform/, so parents[1] is the repo's
-        # maps/ dir where map_transforms.yaml lives alongside the onboard maps.
+        # maps/ dir; the floor dir holds map_transforms.yaml + the onboard maps.
         "MAP_TF_FILE",
-        Path(__file__).resolve().parents[1] / "map_transforms.yaml",
+        Path(__file__).resolve().parents[1] / DEFAULT_MAP_ID / "map_transforms.yaml",
     )
 )
 MIN_ANCHORS = int(os.environ.get("MAP_TF_MIN_ANCHORS", "3"))

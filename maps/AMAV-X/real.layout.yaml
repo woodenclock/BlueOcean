@@ -1,0 +1,148 @@
+# AMAV-X Level 3 — REAL physical graph (hand-measured from green overlay sketch).
+#
+# Canonical layout for VDA5050_MAP_ID=AMAV-X. Loaded by vda5050-real via
+# MASTER_MAP_FILE=/app/maps/AMAV-X/real.layout.yaml (docker-compose.yml).
+#
+# Node ids are "col,row" grid strings: the planner derives its integer grid
+# straight from the id (no separate `grid:` field). x/y are real-world metres
+# in the AMAV-X master frame. `map.id` is the VDA5050 map_id robots must have
+# loaded (the AutoXing onboard map name), NOT the planner label.
+#
+# Robot goals live in maps/robots.yaml (routes.real), NOT here. Real demo starts
+# come from live localization (/state), not config.
+#
+# CBS rules: grid ids are uint >= 0; every edge differs by exactly ±1 in
+# column OR row (4-connected). Metric x/y need not match grid row.
+#
+# Anchor mappings (fixed):
+#   1,5  = [-10.0,  7.5]  left end of top corridor
+#   3,2  = [ -2.0, -1.06]  west lower goal
+#   3,1  = [ -1.51, -1.06]  midpoint between 3,2 and 4,1 (CBS hop)
+#   4,1  = [ -1.02, -1.06]  orange-X marker
+#
+# CBS waypoints (unlabeled on sketch, required for ±1 grid hops):
+#   3,5  = [ -3.0,  7.5]  top corridor between 2,5 and 4,5
+#   5,7  = [  1.9, 20.0]  east trunk step between 5,6 and 5,8
+#
+# Shape: 19 nodes, 18 edges. No blocked edges.
+
+map:
+  id: AMAV-X
+  version: 1.0-amav-x-l3
+  frame: AMAV-X
+nodes:
+  1,5:
+    x: -10.0
+    y: 7.5
+    deviation: 0.25
+  2,5:
+    x: -6.0
+    y: 7.5
+    deviation: 0.25
+  3,5:
+    x: -3.0
+    y: 7.5
+    deviation: 0.25
+  4,5:
+    x: 0.0
+    y: 7.5
+    deviation: 0.25
+  5,5:
+    x: 1.9
+    y: 7.5
+    deviation: 0.25
+  3,2:
+    x: -2.0
+    y: -1.06
+    deviation: 0.25
+  3,1:
+    x: -1.51
+    y: -1.06
+    deviation: 0.25
+  3,3:
+    x: -2.0
+    y: 3.0
+    deviation: 0.25
+  3,4:
+    x: -1.5
+    y: 5.0
+    deviation: 0.25
+  2,4:
+    x: -6.0
+    y: 3.0
+    deviation: 0.25
+  4,4:
+    x: 0.0
+    y: 5.0
+    deviation: 0.25
+  4,3:
+    x: 0.0
+    y: 3.0
+    deviation: 0.25
+  4,2:
+    x: 0.0
+    y: 0.38
+    deviation: 0.25
+  4,1:
+    x: -1.02
+    y: -1.06
+    deviation: 0.25
+  5,4:
+    x: 2.0
+    y: 5.0
+    deviation: 0.25
+  5,6:
+    x: 1.9
+    y: 14.67
+    deviation: 0.25
+  5,7:
+    x: 1.9
+    y: 20.0
+    deviation: 0.25
+  5,8:
+    x: 1.9
+    y: 26.0
+    deviation: 0.25
+  6,6:
+    x: 3.4
+    y: 14.67
+    deviation: 0.25
+
+edges:
+- - 1,5
+  - 2,5
+- - 2,5
+  - 3,5
+- - 3,5
+  - 4,5
+- - 4,5
+  - 5,5
+- - 2,5
+  - 2,4
+- - 4,5
+  - 4,4
+- - 4,4
+  - 4,3
+- - 4,3
+  - 4,2
+- - 3,2
+  - 3,3
+- - 3,2
+  - 3,1
+- - 3,1
+  - 4,1
+- - 3,3
+  - 4,3
+- - 3,4
+  - 4,4
+- - 5,4
+  - 4,4
+- - 5,5
+  - 5,6
+- - 5,6
+  - 5,7
+- - 5,7
+  - 5,8
+- - 5,6
+  - 6,6
+blocked_edges: []

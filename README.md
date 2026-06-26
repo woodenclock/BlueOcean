@@ -11,7 +11,7 @@ and dispatches collision-free VDA5050 orders. The whole system is one
 `git clone` + `docker compose up`, and runs either fully simulated (**dry run**)
 or against physical robots (**real demo**) from the same `docker-compose.yml`.
 
-![AutoXing and Reeman robots on the demo floor](misc/reeman-autoxing.jpg)
+AutoXing and Reeman robots on the demo floor
 
 📹 [MS Teams Video of the Demo](https://itssastar.sharepoint.com/:v:/r/sites/RMF2-Dev-Team/Shared%20Documents/%5BDev%5D%20VDA5050/BlueOceanDemoVideo-GameTL%201-2026-06-15-8000.mp4?csf=1&web=1&e=ukqdqB)
 
@@ -51,24 +51,15 @@ cd rmf2-blue-ocean-stack && git checkout demo-june-blue-ocean
 # 2. Pull all five source repos into src/ (each on demo-june-blue-ocean)
 vcs import src < .repos
 
-# 3. (Real demo only) drop each robot's onboard map under maps/, then calibrate.
-#    See "Map & topology" below and docs/how-to-add-transform-new-map.md.
-cd maps
-PYTHONPATH=. uv run --no-project \
-  --with opencv-python-headless --with numpy --with nudged --with pyyaml --with requests \
-  python -m map_transform.image_calibrate \
-  --master-map-dir autoxing-1_map \
-  --robot-map-dir reeman-1_map \
-  --robot-map-dir reeman-2-blue_map
-cd ..
+
 
 # 4. Build and start the dry-run stack (first build ~2 min for the ROS images)
 docker compose up --build
 ```
 
 Services come up in dependency order. `dry-run` is the default profile
-(`config/config.env` → `COMPOSE_PROFILES=dry-run`, exposed via the `.env`
-symlink).
+(`.env` → `COMPOSE_PROFILES=dry-run`; copy `.env.sample` to `.env` first).
+The active map floor is set in the same file via `VDA5050_MAP_ID` (`AMAV-X` | `l1-artc`).
 
 ## Run the demo
 
@@ -112,9 +103,10 @@ the master without a restart.
 
 ### Real demo (physical robots)
 
-Swaps in the `*-real` services and plans on the ARTC topology
-(`maps/gametl_demo_real.layout.yaml`), coordinates in the AutoXing
-"From Mapping 40" master frame.
+Swaps in the `*-real` services and plans on the selected floor's topology
+(`maps/${VDA5050_MAP_ID}/real.layout.yaml`), with coordinates in that floor's
+AutoXing master frame (`AMAV-X` or `l1-artc` — `VDA5050_MAP_ID` is both the
+master map id and the floor dir name).
 
 **Pre-flight**
 
@@ -141,15 +133,15 @@ Visualiser**). It draws the live master map + robot poses over
 **Pick up / Drop off** flow, and a **Direct Control** panel (bypasses MAPF —
 sends master-frame x/y straight to the robot).
 
-![RMF2 dashboard — Home](misc/dashboard-home.avif)
+RMF2 dashboard — Home
 
 *Dashboard home — Manual Wiki, Network, Simulation, Map, VDA Visualiser, Schedule.*
 
-![VDA Visualiser — live map and robot poses](misc/vda-visualiser-map.avif)
+VDA Visualiser — live map and robot poses
 
 *Live map and robot poses (`autoxing-1`, `reeman-1`) over the master WebSocket.*
 
-![VDA Visualiser — rack pick / drop](misc/vda-visualiser-rack-pickup.avif)
+VDA Visualiser — rack pick / drop
 
 *Per-robot rack **Pick up / Drop off** rows (the AutoXing rack flow).*
 
@@ -160,22 +152,41 @@ master.
 
 ---
 
+# Steps to make a new demo 
+
+1. Map the "new" space with for each robot. make a new m
+
+```bash
+# 3. (Real demo only) drop each robot's onboard map under maps/, then calibrate.
+#    See "Map & topology" below and docs/how-to-add-transform-new-map.md.
+cd maps
+PYTHONPATH=. uv run --no-project \
+  --with opencv-python-headless --with numpy --with nudged --with pyyaml --with requests \
+  python -m map_transform.image_calibrate \
+  --master-map-dir autoxing-1_map \
+  --robot-map-dir reeman-2-blue_map
+cd ..
+```
+
+
+
 ## Map & topology
 
-There is one map file per profile — the **single source of truth**, loaded by the
-VDA5050 master (`MASTER_MAP_FILE`) and served over `/map` + `/map/grid`:
+There is one map file per profile, per floor — the **single source of truth**,
+loaded by the VDA5050 master (`MASTER_MAP_FILE`) and served over `/map` +
+`/map/grid`. The floor is chosen by `VDA5050_MAP_ID` (see [maps/README.md](maps/README.md)):
 
 
-| Profile   | Layout file (`maps/`)          |
-| --------- | ------------------------------ |
-| Dry run   | `gametl_demo.layout.yaml`      |
-| Real demo | `gametl_demo_real.layout.yaml` |
+| Profile   | Layout file (`maps/${VDA5050_MAP_ID}/`) |
+| --------- | --------------------------------------- |
+| Dry run   | `dry_run.layout.yaml`                   |
+| Real demo | `real.layout.yaml`                      |
 
 
 Node ids are `"col,row"` grid strings — the planner derives its integer CBS grid
 straight from the id (no separate grid field); `x`/`y` are the metric
 master-frame coordinates the master dispatches against. Robot start/goal live in
-`maps/robots.yaml`, not in the layout.
+`maps/${VDA5050_MAP_ID}/robots.yaml`, not in the layout.
 
 - **Add / move a node:** [docs/how-to-add-node-to-map.md](docs/how-to-add-node-to-map.md)
 (every edge must step ±1 in one axis — skipping grid ids breaks CBS).
@@ -198,7 +209,7 @@ the master** at startup — robots only need `ROBOT_ID` + `MASTER_URL`.
 
 | Robot              | Frame                                | Jack                                                                 | Reference                            |
 | ------------------ | ------------------------------------ | -------------------------------------------------------------------- | ------------------------------------ |
-| **AutoXing**       | master ("From Mapping 40"), identity | `/services/jack_up` · `_down`; rack pick/drop via the tablet         | [docs/autoxing.md](docs/autoxing.md) |
+| **AutoXing**       | master (frame = `VDA5050_MAP_ID`), identity | `/services/jack_up` · `_down`; rack pick/drop via the tablet         | [docs/autoxing.md](docs/autoxing.md) |
 | **Reeman** FlyBoat | own frame, calibrated to master      | hydraulic lift (`/cmd/hydraulic_up`/`_down`); no jack-state endpoint | [docs/reeman.md](docs/reeman.md)     |
 
 
@@ -208,8 +219,9 @@ covered in [docs/how-to-jack-off-and-on.md](docs/how-to-jack-off-and-on.md).
 
 ## Service ports
 
-All ports live in [config/config.env](config/config.env) (loaded via the `.env`
-symlink). Fixtures read the same variables when `--port`/`--host` is omitted.
+All ports live in [`.env`](.env.sample) (auto-loaded by Compose; copy from
+[`.env.sample`](.env.sample)). Fixtures read the same variables when
+`--port`/`--host` is omitted.
 
 
 | Service             | URL / port (default)                                                                                 |
@@ -241,10 +253,11 @@ See `fixtures/demo_tasks.json` for sample payloads.
 ```
 rmf2-blue-ocean-stack/
 ├── .repos                       # vcstool manifest (5 repos, demo-june-blue-ocean)
+├── .env.sample                  # stack config template (ports, COMPOSE_PROFILES, VDA5050_MAP_ID) — copy to .env
 ├── docker-compose.yml           # full stack (dry-run + real-demo profiles)
 ├── docker/                      # task-orchestrator / res-mapf / vda5050 Dockerfiles
-├── config/                      # config.env, mosquitto.conf, task_orchestrator.toml
-├── maps/                        # layout YAMLs, robots.yaml, map_transforms.yaml, onboard maps
+├── config/                      # mosquitto.conf, task_orchestrator.toml
+├── maps/                        # per-floor dirs (l1/, l3-amav-x/) + shared map_transform/ tooling
 ├── fixtures/                    # uv-run demo publishers + order verifier
 ├── docs/                        # architecture + how-to references (linked above)
 └── src/                         # populated by: vcs import src < .repos

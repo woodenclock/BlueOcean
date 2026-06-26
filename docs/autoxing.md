@@ -28,11 +28,11 @@ RMF / scheduler ──VDA5050 order──▶ autoxing-adapter-real ──REST─
 ```
 
 - Our stack drives the robot **to the node beside the rack** (a normal VDA5050
-  node from `maps/gametl_demo_real.layout.yaml`, served by the master in the
-  AutoXing "From Mapping 40" frame).
+  node from `maps/<VDA5050_MAP_ID>/real.layout.yaml`, served by the master in the
+  AutoXing "l1-artc" frame).
 - The **rack pickup/drop itself is owned by the robot**. It is configured once,
   on the tablet, against the same onboard map the adapter selects at startup
-  (`maps/autoxing-1_map/`, AutoXing map id **27** — see `maps/robots.yaml`).
+  (`maps/autoxing-1_map/`, AutoXing map id **27** — see `maps/<VDA5050_MAP_ID>/robots.yaml`).
 - Because the rack is tablet-side, **the rack will not appear in the planner
   grid or the VDA5050 visualiser.** That is expected for the quick demo.
 
@@ -51,7 +51,7 @@ RMF / scheduler ──VDA5050 order──▶ autoxing-adapter-real ──REST─
       calibration and the run. The calibration is a fixed map pose; moving the
       rack invalidates it.
 - [ ] You can reach the tablet's mapping/operations application (the same app
-      used to build "From Mapping 40").
+      used to build "l1-artc").
 - [ ] Tablet firmware exposes the rack / jack-up ("顶升" / lift) feature. If the
       rack action is missing from the action list, the feature is not enabled
       on this firmware — stop and resolve that first.
@@ -121,7 +121,7 @@ Once the rack is set up on the tablet, the run is normal:
    ```bash
    docker compose --profile real-demo up -d mqtt-broker vda5050-real autoxing-1-real reeman-1-real
    ```
-   The `autoxing-1` `endpoint` in `maps/robots.yaml` (e.g. `http://<robot-ip>:8090`)
+   The `autoxing-1` `endpoint` in `maps/<VDA5050_MAP_ID>/robots.yaml` (e.g. `http://<robot-ip>:8090`)
    must point at the robot's REST endpoint; the adapter reads it from the master
    `/robots` at startup and switches the robot to onboard map id 27.
 3. The scheduler dispatches the robot to the **node beside the rack**; the

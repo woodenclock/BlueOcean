@@ -1,13 +1,13 @@
 # Map-frame transforms for the VDA5050 real demo (single source of truth).
 # master_frame is the shared frame; each adapter entry (keyed by robot_id)
 # is robot->master as a 2D similarity (theta radians, scale ~1.0). Regenerate:
-#     cd maps && python -m map_transform.image_calibrate \
+#     cd maps && python -m map_transform.image_calibrate --map-id l1-artc \
 #         --master-map-dir autoxing-1_map --robot-map-dir reeman-1_map [...]
 # Consumed at adapter init when MAP_TF_MODE=file.
-master_frame: From Mapping 40
+master_frame: l1-artc
 adapters:
   autoxing-1:
-    map_name: From Mapping 40
+    map_name: l1-artc
     robot_to_master:
       tx: 0.0
       ty: 0.0
