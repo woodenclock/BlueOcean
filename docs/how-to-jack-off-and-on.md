@@ -119,7 +119,7 @@ jack.
 ## Rack nodes
 
 Racks are where the auto-toggle fires. Default (mirrors
-`maps/<VDA5050_MAP_ID>/real.layout.yaml`):
+`maps/<VDA5050_MAP_ID>/real.layout.lif.json`):
 
 | Rack | Approach (node before) | Area |
 | --- | --- | --- |
@@ -156,7 +156,7 @@ RACK_NODES="2,4=2,3;3,4=3,3"   # scheduler env
 ## Related
 
 - `docs/real-demo-node-coords.md` — node coordinates / map frame
-- `maps/<VDA5050_MAP_ID>/real.layout.yaml` — `racks:` block (canonical rack list)
+- `maps/<VDA5050_MAP_ID>/real.layout.lif.json` — `stations` with `stationDescription` `approach=<node>` (canonical rack list)
 - `autoxing_bridge/spellbook/pick_rack.py` — canonical spellbook (robot REST sequence)
 - `demo_routes/pick_rack.py` — thin scheduler wrapper (`POST /demo/pick-rack`)
 - `demo_routes/mission.py` — mission runner; legacy rack-direct + MAPF `goal_jacks`

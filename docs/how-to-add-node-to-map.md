@@ -4,7 +4,7 @@
 > sketch; do not paste live robot IPs or addresses into this file).
 
 This page is the quick recipe for adding a **new node** to the real-demo
-topology. The whole map is one file — `maps/<VDA5050_MAP_ID>/real.layout.yaml` — and
+topology. The whole map is one file — `maps/<VDA5050_MAP_ID>/real.layout.lif.json` — and
 the planner derives its grid straight from the node ids, so there is no separate
 grid to maintain. Full coordinate table lives in
 [`real-demo-node-coords.md`](./real-demo-node-coords.md).
@@ -13,7 +13,7 @@ Audience: whoever extends the floor graph between runs.
 
 ## Files to change
 
-- `maps/<VDA5050_MAP_ID>/real.layout.yaml` — add the node under `nodes:` and an edge under `edges:`.
+- `maps/<VDA5050_MAP_ID>/real.layout.lif.json` — add the node under `layouts[0].nodes` and an edge under `layouts[0].edges`.
 - `docs/real-demo-node-coords.md` — add the new node's row/diagram entry so the table stays the source of truth.
 - `maps/<VDA5050_MAP_ID>/robots.yaml` — (only if the node is a route start/goal) point `routes.real` at it.
 
@@ -115,7 +115,7 @@ Read it off the ARTC sketch / [`real-demo-node-coords.md`](./real-demo-node-coor
 or take it from a live AutoXing pose. Coordinates **must** be in the AutoXing
 "l1-artc" frame.
 
-### 3. Add the node  → `maps/<VDA5050_MAP_ID>/real.layout.yaml`
+### 3. Add the node  → `maps/<VDA5050_MAP_ID>/real.layout.lif.json`
 
 ```yaml
 nodes:

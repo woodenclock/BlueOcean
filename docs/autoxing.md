@@ -28,7 +28,7 @@ RMF / scheduler ──VDA5050 order──▶ autoxing-adapter-real ──REST─
 ```
 
 - Our stack drives the robot **to the node beside the rack** (a normal VDA5050
-  node from `maps/<VDA5050_MAP_ID>/real.layout.yaml`, served by the master in the
+  node from `maps/<VDA5050_MAP_ID>/real.layout.lif.json`, served by the master in the
   AutoXing "l1-artc" frame).
 - The **rack pickup/drop itself is owned by the robot**. It is configured once,
   on the tablet, against the same onboard map the adapter selects at startup

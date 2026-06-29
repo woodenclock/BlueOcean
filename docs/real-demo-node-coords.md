@@ -3,7 +3,7 @@
 > ARES PRIVATE — internal demo data.
 
 The real demo runs on its **own topology**, separate from the dry-run grid:
-`maps/<VDA5050_MAP_ID>/real.layout.yaml` (loaded and served by the VDA5050 master).
+`maps/<VDA5050_MAP_ID>/real.layout.lif.json` (loaded and served by the VDA5050 master).
 Coordinates below were read from the hand-measured sketch (`ARTC.heic`,
 2026-06-12) of the AutoXing map.
 
@@ -44,7 +44,7 @@ See [`how-to-add-node-to-map.md`](./how-to-add-node-to-map.md#mapf--cbs-grid-rul
 | 3,0 |  0.0 |  6.0 | AutoXing goal (Reeman passes through) |
 | 2,0 |  0.0 |  2.0 | Reeman goal |
 
-To change a coordinate: edit `maps/<VDA5050_MAP_ID>/real.layout.yaml`, then restart
+To change a coordinate: edit `maps/<VDA5050_MAP_ID>/real.layout.lif.json`, then restart
 the master — `docker compose --profile real-demo up -d vda5050-real`
 (no rebuild needed; `maps/` is mounted). The node id `"col,row"` encodes the
 planner grid; `x`/`y` are the metric master-frame coords the master dispatches.
@@ -52,7 +52,7 @@ planner grid; `x`/`y` are the metric master-frame coords the master dispatches.
 Pre-run checklist:
 
 - [ ] The VDA5050 `map_id` **"l1-artc"** comes from `map.id` in
-      `maps/<VDA5050_MAP_ID>/real.layout.yaml`; the adapters fetch it from the master
+      `maps/<VDA5050_MAP_ID>/real.layout.lif.json`; the adapters fetch it from the master
       `/map` (override with `VDA5050_MAP_ID`). At startup each adapter switches
       its robot to its `onboard_map` from the master `/robots` —
       `maps/autoxing-1_map/` (AutoXing id 27) or `maps/reeman-1_map/` (Reeman hash

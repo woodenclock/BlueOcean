@@ -8,8 +8,7 @@ A two-robot Multi-Agent Path Finding (MAPF) + VDA5050 coordination demo. A
 single dispatch schedules two heterogeneous robots (**AutoXing**, **Reeman**) to
 their goals; a Conflict-Based Search (CBS) planner resolves their path conflict
 and dispatches collision-free VDA5050 orders. The whole system is one
-`git clone` + `docker compose up`, and runs either fully simulated (**dry run**)
-or against physical robots (**real demo**) from the same `docker-compose.yml`.
+`git clone` + `docker compose up` against physical robots.
 
 AutoXing and Reeman robots on the demo floor
 
@@ -32,6 +31,8 @@ All five source repos are checked out on the `demo-june-blue-ocean` branch
 | AMQP broker               | `rabbitmq`                      | `AMQP_PORT` / `AMQP_MGMT_PORT` |
 
 
+
+
 ## Prerequisites
 
 - Docker + Docker Compose v2
@@ -40,6 +41,8 @@ All five source repos are checked out on the `demo-june-blue-ocean` branch
 calibrator (both provision their own deps; no `pip install` needed)
 
 ---
+
+
 
 ## Quick Start
 
@@ -52,61 +55,26 @@ cd rmf2-blue-ocean-stack && git checkout demo-june-blue-ocean
 vcs import src < .repos
 
 
-
-# 4. Build and start the dry-run stack (first build ~2 min for the ROS images)
+# 4. Build and start the stack (first build ~2 min for the ROS images)
 docker compose up --build
 ```
 
-Services come up in dependency order. `dry-run` is the default profile
-(`.env` → `COMPOSE_PROFILES=dry-run`; copy `.env.sample` to `.env` first).
-The active map floor is set in the same file via `VDA5050_MAP_ID` (`AMAV-X` | `l1-artc`).
+Services come up in dependency order. Copy `.env.sample` to `.env` first; the
+active map floor is set there via `VDA5050_MAP_ID` (`AMAV-X` | `l1-artc`).
 
-## Run the demo
+## Run the demo (physical robots)
 
 The two-robot conflict scenario: the CBS planner sends both robots through the
 shared corridor one at a time — one crosses while the other holds at the
 intersection, then follows.
 
-Robot **goals** are read from `maps/robots.yaml` (`routes.dry_run` /
-`routes.real`). Real-demo **starts** are not configured — each robot's live
-`/state` pose is snapped to the nearest map node (within `SNAP_MAX_DIST_M`,
-default 3 m).
-
-### Dry run (simulated, no robots)
-
-Simulated adapters teleport their reported pose node by node — no hardware.
-
-```bash
-docker compose --profile dry-run up --build   # or just: docker compose up --build
-
-# Verify both robots received the expected VDA5050 orders on MQTT
-uv run fixtures/run_verify_orders.py
-```
-
-Trigger the moves from the scheduler's Swagger page —
-[localhost:8089/docs](http://localhost:8089/docs) → `POST /demo/navigate-to` →
-**Try it out** → pick the `autoxing` / `reeman` example → **Execute** — or from
-the dashboard's **VDA Visualiser** (click a node, **Apply**). `/demo/navigate-to`
-takes a `dry_run` flag (default `true`) and reads each robot's goal from
-`maps/robots.yaml`.
-
-**Re-running.** Restart the master and its adapters *together* — the master
-holds per-robot order state in memory, so adapters restarting alone leave it
-stale (orders come back `STITCH_REJECTED`):
-
-```bash
-docker compose restart vda5050 autoxing-1 reeman-1
-```
-
-Alternatively `POST /demo/mapf-all-idle` clears stored plans/dispatch records on
-the master without a restart.
-
-### Real demo (physical robots)
-
-Swaps in the `*-real` services and plans on the selected floor's topology
-(`maps/${VDA5050_MAP_ID}/real.layout.yaml`), with coordinates in that floor's
+The stack plans on the selected floor's topology
+(`maps/${VDA5050_MAP_ID}/real.layout.lif.json`), with coordinates in that floor's
 AutoXing master frame (`AMAV-X` or `l1-artc` — `VDA5050_MAP_ID` is both the
-master map id and the floor dir name).
+master map id and the floor dir name). Robot **goals** are read from
+`maps/robots.yaml` (`routes.real`); **starts** are not configured — each robot's
+live `/state` pose is snapped to the nearest map node (within `SNAP_MAX_DIST_M`,
+default 3 m).
 
 **Pre-flight**
 
@@ -115,13 +83,29 @@ master map id and the floor dir name).
 2. Each robot's REST `endpoint` set in `maps/robots.yaml`.
 
 ```bash
-docker compose --profile real-demo up --build
+docker compose up --build
+
+# Verify both robots received the expected VDA5050 orders on MQTT
+uv run fixtures/run_verify_orders.py
 ```
 
-Then fire `POST /demo/navigate-to` per robot with `dry_run=false` (Swagger or
-dashboard). The scheduler reads each robot's live pose from the master `/state`,
-snaps it to the nearest `/map` node as the start, and plans to the goals in
-`maps/robots.yaml`.
+Trigger the moves from the scheduler's Swagger page —
+[localhost:8089/docs](http://localhost:8089/docs) → `POST /demo/navigate-to` →
+**Try it out** → pick the `autoxing` / `reeman` example → **Execute** — or from
+the dashboard's **VDA Visualiser** (click a node, **Apply**). The scheduler reads
+each robot's live pose from the master `/state`, snaps it to the nearest `/map`
+node as the start, and plans to the goals in `maps/robots.yaml`.
+
+**Re-running.** Restart the master and its adapters *together* — the master
+holds per-robot order state in memory, so adapters restarting alone leave it
+stale (orders come back `STITCH_REJECTED`):
+
+```bash
+docker compose restart vda5050 autoxing-1 reeman-2-blue
+```
+
+Alternatively `POST /demo/mapf-all-idle` clears stored plans/dispatch records on
+the master without a restart.
 
 Full node table and pre-flight checklist: [docs/real-demo-node-coords.md](docs/real-demo-node-coords.md).
 
@@ -139,7 +123,7 @@ RMF2 dashboard — Home
 
 VDA Visualiser — live map and robot poses
 
-*Live map and robot poses (`autoxing-1`, `reeman-1`) over the master WebSocket.*
+*Live map and robot poses (*`autoxing-1`*,* `reeman-1`*) over the master WebSocket.*
 
 VDA Visualiser — rack pick / drop
 
@@ -152,7 +136,9 @@ master.
 
 ---
 
-# Steps to make a new demo 
+
+
+# Steps to make a new demo
 
 1. Map the "new" space with for each robot. make a new m
 
@@ -172,16 +158,10 @@ cd ..
 
 ## Map & topology
 
-There is one map file per profile, per floor — the **single source of truth**,
-loaded by the VDA5050 master (`MASTER_MAP_FILE`) and served over `/map` +
-`/map/grid`. The floor is chosen by `VDA5050_MAP_ID` (see [maps/README.md](maps/README.md)):
-
-
-| Profile   | Layout file (`maps/${VDA5050_MAP_ID}/`) |
-| --------- | --------------------------------------- |
-| Dry run   | `dry_run.layout.yaml`                   |
-| Real demo | `real.layout.yaml`                      |
-
+There is one layout file per floor — the **single source of truth**, loaded by
+the VDA5050 master (`MASTER_MAP_FILE` → `maps/${VDA5050_MAP_ID}/real.layout.lif.json`)
+and served over `/map` + `/map/grid`. The floor is chosen by `VDA5050_MAP_ID`
+(see [maps/README.md](maps/README.md)).
 
 Node ids are `"col,row"` grid strings — the planner derives its integer CBS grid
 straight from the id (no separate grid field); `x`/`y` are the metric
@@ -194,7 +174,7 @@ master-frame coordinates the master dispatches against. Robot start/goal live in
 - **Re-map a robot / recompute its frame transform:** [docs/how-to-add-transform-new-map.md](docs/how-to-add-transform-new-map.md)
 
 `maps/` is mounted into the master, so coordinate edits need only a restart
-(`docker compose --profile real-demo up -d vda5050-real`), no rebuild.
+(`docker compose up -d vda5050`), no rebuild.
 
 ### Frame transforms
 
@@ -207,10 +187,10 @@ the master** at startup — robots only need `ROBOT_ID` + `MASTER_URL`.
 ## Robots & jack control
 
 
-| Robot              | Frame                                | Jack                                                                 | Reference                            |
-| ------------------ | ------------------------------------ | -------------------------------------------------------------------- | ------------------------------------ |
+| Robot              | Frame                                       | Jack                                                                 | Reference                            |
+| ------------------ | ------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------ |
 | **AutoXing**       | master (frame = `VDA5050_MAP_ID`), identity | `/services/jack_up` · `_down`; rack pick/drop via the tablet         | [docs/autoxing.md](docs/autoxing.md) |
-| **Reeman** FlyBoat | own frame, calibrated to master      | hydraulic lift (`/cmd/hydraulic_up`/`_down`); no jack-state endpoint | [docs/reeman.md](docs/reeman.md)     |
+| **Reeman** FlyBoat | own frame, calibrated to master             | hydraulic lift (`/cmd/hydraulic_up`/`_down`); no jack-state endpoint | [docs/reeman.md](docs/reeman.md)     |
 
 
 Jack control is **AutoXing-only** in this demo (Reeman `POST /actions/jack`
@@ -219,8 +199,8 @@ covered in [docs/how-to-jack-off-and-on.md](docs/how-to-jack-off-and-on.md).
 
 ## Service ports
 
-All ports live in [`.env`](.env.sample) (auto-loaded by Compose; copy from
-[`.env.sample`](.env.sample)). Fixtures read the same variables when
+All ports live in `[.env](.env.sample)` (auto-loaded by Compose; copy from
+`[.env.sample](.env.sample)`). Fixtures read the same variables when
 `--port`/`--host` is omitted.
 
 
@@ -232,6 +212,8 @@ All ports live in [`.env`](.env.sample) (auto-loaded by Compose; copy from
 | VDA5050 master docs | [http://localhost:8000/docs](http://localhost:8000/docs) (`/state`, `/map`, `/transform`, `/robots`) |
 | MQTT broker         | 1883                                                                                                 |
 | RabbitMQ management | [http://localhost:15672](http://localhost:15672) (guest / guest)                                     |
+
+
 
 
 ## Demo fixtures
@@ -253,8 +235,8 @@ See `fixtures/demo_tasks.json` for sample payloads.
 ```
 rmf2-blue-ocean-stack/
 ├── .repos                       # vcstool manifest (5 repos, demo-june-blue-ocean)
-├── .env.sample                  # stack config template (ports, COMPOSE_PROFILES, VDA5050_MAP_ID) — copy to .env
-├── docker-compose.yml           # full stack (dry-run + real-demo profiles)
+├── .env.sample                  # stack config template (ports, VDA5050_MAP_ID) — copy to .env
+├── docker-compose.yml           # full stack (real physical robots)
 ├── docker/                      # task-orchestrator / res-mapf / vda5050 Dockerfiles
 ├── config/                      # mosquitto.conf, task_orchestrator.toml
 ├── maps/                        # per-floor dirs (l1/, l3-amav-x/) + shared map_transform/ tooling
@@ -264,6 +246,8 @@ rmf2-blue-ocean-stack/
 ```
 
 ---
+
+
 
 ## Branch: `demo-june-blue-ocean`
 
