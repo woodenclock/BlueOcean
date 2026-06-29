@@ -19,3 +19,7 @@ repositories:
     type: git
     url: git@gitlab.com:ROSI-AP/rmf2/blueocean/vda5050_core_gametl.git
     version: demo-june-blue-ocean
+  src/rmf2_map_server:
+    type: git
+    url: git@gitlab.com:ROSI-AP/rmf2/blueocean/rmf2_map_server.git
+    version: demo-june-blue-ocean
