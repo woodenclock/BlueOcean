@@ -1,8 +1,8 @@
 # Map-frame transforms for the VDA5050 real demo (single source of truth).
 # master_frame is the shared frame; each adapter entry (keyed by robot_id)
 # is robot->master as a 2D similarity (theta radians, scale ~1.0). Regenerate:
-#     cd maps && python -m map_transform.image_calibrate --map-id AMAV-X \
-#         --master-map-dir autoxing-1_map --robot-map-dir reeman-2-blue_map [...]
+#     cd maps && python -m map_transform.image_calibrate \
+#         --master-map-dir autoxing-1_map --robot-map-dir reeman-1_map [...]
 # Consumed at adapter init when MAP_TF_MODE=file.
 master_frame: AMAV-X
 adapters:
@@ -16,9 +16,9 @@ adapters:
   reeman-2-blue:
     map_name: Level3_1
     robot_to_master:
-      tx: -0.6942
-      ty: -0.6096
+      tx: -0.6944
+      ty: -0.6094
       theta: 3.12763
       scale: 1.0
     source: image-registration
-    response: 0.2718
+    response: 0.279
