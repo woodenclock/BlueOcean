@@ -1,5 +1,5 @@
 # Canonical robot config for the L1 floor — SINGLE SOURCE OF TRUTH for robot
-# identity, onboard maps, REST endpoints, and per-mode demo routes. The VDA5050
+# identity, onboard maps, REST endpoints, and demo routes. The VDA5050
 # master loads this file (selected by VDA5050_MAP_ID=l1-artc) and serves it over HTTP
 # (/robots).
 #
@@ -15,10 +15,8 @@
 #   Reeman   — host or host:port (scheme added by consumers), e.g. 192.168.68.62
 # It is the single source of truth for /demo/direct-navigate + jack control.
 #
-# `routes.dry_run.start` doubles as the dry-run home node. Real demo starts come
-# from live robot localization (/state), not config — only goals are configured
-# under routes.real. Node ids reference maps/l1-artc/real.layout.yaml (real) and
-# maps/l1-artc/dry_run.layout.yaml (dry-run).
+# Demo starts come from live robot localization (/state), not config — only goals
+# are configured under routes.real. Node ids reference maps/l1-artc/real.layout.lif.json.
 # asset_dir is maps/l1-artc/<robot_id>_map. Frame offsets vs the AutoXing master live
 # in maps/l1-artc/map_transforms.yaml.
 
@@ -33,8 +31,7 @@ robots:
       asset_dir: maps/l1-artc/autoxing-1_map
       note: "Reference (master) frame — layout x/y are measured in this frame (autoxing_map_1095x1045)."
     routes:
-      dry_run: { start: "0,5", goal: "3,4" }
-      real:    { goal: "4,6" }
+      real: { goal: "4,6" }
 
   - robot_id: reeman-1
     manufacturer: Reeman
@@ -46,8 +43,7 @@ robots:
       asset_dir: maps/l1-artc/reeman-1_map
       note: "On-robot name is an immutable hash (= map_id); only the alias is editable. The VDA5050 map_id 'l1-artc' comes from the adapter's VDA5050_MAP_ID env (master frame = AutoXing). Frame offset vs AutoXing via maps/map_transforms.yaml."
     routes:
-      dry_run: { start: "5,6", goal: "4,4" }
-      real:    { goal: "3,6" }
+      real: { goal: "3,6" }
 
   # Second Reeman robot (not in use — uncomment to enable).
   # Same manufacturer as reeman-1; distinguished by serial_number (R002) and
@@ -62,5 +58,4 @@ robots:
   #     asset_dir: maps/l1-artc/reeman-2-blue_map
   #     note: "Own native frame; offset vs AutoXing master via map_transforms.yaml adapters.reeman-2-blue."
   #   routes:
-  #     dry_run: { start: "5,5", goal: "0,5" }
-  #     real:    { goal: "7,9" }
+  #     real: { goal: "7,9" }

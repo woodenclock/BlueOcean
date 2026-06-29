@@ -1,10 +1,10 @@
 """Standalone AutoXing (AXBot) REST client for map calibration.
 
-The autoxing_bridge spellbook shadows the same module names as the Reeman
+The autoxing/autoxing_bridge spellbook shadows the same module names as the Reeman
 spellbook (``api_client``, ``credentials``, ...), so the Reeman adapter
 process cannot import it. This client talks to the AXBot REST API (port
 8090) directly with ``requests``, mirroring the endpoints used by
-``autoxing_bridge/spellbook/commands/{get_current_map,get_map_overlays,
+``autoxing/autoxing_bridge/spellbook/commands/{get_current_map,get_map_overlays,
 download_map}.py``. Base URL comes from env ``AUTOXING_BASE_URL``
 (e.g. ``http://192.168.1.50:8090``).
 """
@@ -32,7 +32,7 @@ def base_url() -> str:
     if ip:
         return f"http://{ip}".rstrip("/")
     try:
-        from autoxing_bridge._spellbook_path import ensure_spellbook
+        from autoxing.autoxing_bridge._spellbook_path import ensure_spellbook
 
         ensure_spellbook()
         from credentials import CONSTANTS as ROBOT  # spellbook active robot

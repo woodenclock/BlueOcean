@@ -15,9 +15,8 @@
 #   Reeman   — host or host:port (scheme added by consumers), e.g. 192.168.68.62
 # It is the single source of truth for /demo/direct-navigate + jack control.
 #
-# `routes.dry_run.start` doubles as the dry-run home node. Real demo starts come
-# from live robot localization (/state), not config — only goals are configured
-# under routes.real. Node ids reference maps/AMAV-X/real.layout.yaml.
+# Demo starts come from live robot localization (/state), not config — only goals
+# are configured under routes.real. Node ids reference maps/AMAV-X/real.layout.lif.json.
 # asset_dir is maps/AMAV-X/<robot_id>_map. Frame offsets vs the AMAV-X master
 # live in maps/AMAV-X/map_transforms.yaml.
 
