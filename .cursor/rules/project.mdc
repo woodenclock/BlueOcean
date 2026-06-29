@@ -9,17 +9,17 @@ All **direct robot REST** calls for AutoXing and Reeman must go through the vend
 
 | Manufacturer | Spellbook path |
 |--------------|----------------|
-| AutoXing | `src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/autoxing_bridge/spellbook/` |
-| Reeman | `src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/reeman_bridge/spellbook/` |
+| AutoXing | `src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/autoxing/autoxing_bridge/spellbook/` |
+| Reeman | `src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/reeman/reeman_bridge/spellbook/` |
 
 ## Rules
 
 - **Import and call spellbook functions** (`navigate`, `jack_up`, `jack_down`, `pick_rack`, etc.). Do not duplicate payloads or endpoints (`/chassis/moves`, `/services/jack_*`, `align_with_rack`, `to_unload_point`, …) elsewhere.
-- **Load spellbook** via `autoxing_bridge._spellbook_path.ensure_spellbook()` or `demo_routes.spellbook_loader.load_pick_rack(endpoint)`. Set `AUTOXING_BASE_URL` / robot `endpoint` from `maps/robots.yaml` before calling.
+- **Load spellbook** via `autoxing.autoxing_bridge._spellbook_path.ensure_spellbook()` or `demo_routes.spellbook_loader.load_pick_rack(endpoint)`. Set `AUTOXING_BASE_URL` / robot `endpoint` from `maps/robots.yaml` before calling.
 - **Scheduler and UI are thin wrappers** — FastAPI routes and dashboard buttons delegate to spellbook; they do not own robot I/O logic.
-- **Canonical pick_rack** is `autoxing_bridge/spellbook/pick_rack.py` (copied from autoxing-spellbook-cli). `demo_routes/pick_rack.py` only wires mission state + HTTP API around it.
+- **Canonical pick_rack** is `autoxing/autoxing_bridge/spellbook/pick_rack.py` (copied from autoxing-spellbook-cli). `demo_routes/pick_rack.py` only wires mission state + HTTP API around it.
 
 ## Paths
 
 - Host: `AUTOXING_SPELLBOOK_DIR` in `config/config.env` (relative to repo root).
-- Docker scheduler: `/vda_demo/autoxing_bridge/spellbook` (`VDA_DEMO_ROOT=/vda_demo`).
+- Docker scheduler: `/vda_demo/autoxing/autoxing_bridge/spellbook` (`VDA_DEMO_ROOT=/vda_demo`).

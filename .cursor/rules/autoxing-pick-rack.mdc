@@ -12,7 +12,7 @@ globs: src/**/pick_rack.py,src/**/spellbook/**,src/**/vda-visualiser/**
 
 The **source of truth** for rack pick-and-place is the vendored spellbook:
 
-`src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/autoxing_bridge/spellbook/pick_rack.py`
+`src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/autoxing/autoxing_bridge/spellbook/pick_rack.py`
 
 Copied from autoxing-spellbook-cli. Do **not** reimplement the robot REST sequence elsewhere.
 
