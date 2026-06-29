@@ -16,7 +16,7 @@ maps/
 ├── uv.lock
 ├── .venv/                # local, gitignored
 ├── AMAV-X/               # VDA5050_MAP_ID=AMAV-X  — AMAV-X master frame (default)
-└── l1-artc/              # VDA5050_MAP_ID=l1-artc — synthetic dry-run grid + ARTC real floor
+└── l1-artc/              # VDA5050_MAP_ID=l1-artc — ARTC real floor
 ```
 
 Each floor dir uses the **same normalized filenames** so `VDA5050_MAP_ID` is the
@@ -26,8 +26,7 @@ only knob the stack needs:
 |------|---------|
 | `robots.yaml` | per-floor robot roster (identity, endpoints, onboard maps) |
 | `map_transforms.yaml` | per-floor robot→master frame transforms |
-| `real.layout.yaml` | physical-coordinate node/edge graph (real-demo) |
-| `dry_run.layout.yaml` | synthetic grid graph (dry-run) |
+| `real.layout.lif.json` | VDA5050 LIF topology (nodes, edges, stations) — loaded by the master |
 | `master.image.png` | master-frame occupancy image for the UI overlay |
 | `master.image.yaml` | resolution/origin meta for `master.image.png` |
 | `<robot_id>_map/` | each robot's onboard occupancy map (PNG + yaml) |
@@ -46,9 +45,8 @@ VDA5050_MAP_ID=AMAV-X
 VDA5050_MAP_ID=l1-artc
 ```
 
-> Note: `AMAV-X` is a real-demo floor — its `robots.yaml` has no `routes:`, and
-> `dry_run.layout.yaml` is the shared synthetic grid (so the dry-run master can
-> still boot). Use `l1-artc` for a fully-wired dry-run with start/goal routes.
+> Note: `AMAV-X`'s `robots.yaml` has no `routes:` goals yet; `l1-artc` is the
+> fully-wired floor with per-robot goal routes.
 
 ## Calibrating a floor's transforms
 

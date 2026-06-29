@@ -1,0 +1,736 @@
+{
+  "metaInformation": {
+    "projectIdentification": "AMAV-X",
+    "creator": "GameTL",
+    "exportTimestamp": "2026-06-29T07:46:13Z",
+    "lifVersion": "1.0.0"
+  },
+  "layouts": [
+    {
+      "layoutId": "AMAV-X",
+      "layoutName": "AMAV-X",
+      "layoutVersion": "1",
+      "layoutLevelId": "AMAV-X",
+      "nodes": [
+        {
+          "nodeId": "1,5",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -10.0,
+            "y": 7.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "2,5",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -6.0,
+            "y": 7.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "3,5",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -3.0,
+            "y": 7.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "4,5",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 0.0,
+            "y": 7.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "5,5",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 1.9,
+            "y": 7.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "3,2",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -2.0,
+            "y": -1.06
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "3,3",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -2.0,
+            "y": 3.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "3,4",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -1.5,
+            "y": 5.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "2,4",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -6.0,
+            "y": 3.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "4,4",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 0.0,
+            "y": 5.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "4,3",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 0.0,
+            "y": 3.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "4,2",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 0.0,
+            "y": 0.38
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "3,1",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": -1.02,
+            "y": -1.06
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "5,4",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 2.0,
+            "y": 5.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "5,6",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 1.9,
+            "y": 14.67
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "5,7",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 1.9,
+            "y": 20.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "5,8",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 1.9,
+            "y": 26.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        },
+        {
+          "nodeId": "6,6",
+          "mapId": "AMAV-X",
+          "nodePosition": {
+            "x": 3.4,
+            "y": 14.67
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "theta": 0.0
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "theta": 0.0
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "1,5-2,5",
+          "startNodeId": "1,5",
+          "endNodeId": "2,5",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "2,5-3,5",
+          "startNodeId": "2,5",
+          "endNodeId": "3,5",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "3,5-4,5",
+          "startNodeId": "3,5",
+          "endNodeId": "4,5",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "4,5-5,5",
+          "startNodeId": "4,5",
+          "endNodeId": "5,5",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "2,5-2,4",
+          "startNodeId": "2,5",
+          "endNodeId": "2,4",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "4,5-4,4",
+          "startNodeId": "4,5",
+          "endNodeId": "4,4",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "4,4-4,3",
+          "startNodeId": "4,4",
+          "endNodeId": "4,3",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "4,3-4,2",
+          "startNodeId": "4,3",
+          "endNodeId": "4,2",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "3,2-3,3",
+          "startNodeId": "3,2",
+          "endNodeId": "3,3",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "3,2-3,1",
+          "startNodeId": "3,2",
+          "endNodeId": "3,1",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "3,3-4,3",
+          "startNodeId": "3,3",
+          "endNodeId": "4,3",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "3,4-4,4",
+          "startNodeId": "3,4",
+          "endNodeId": "4,4",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "5,4-4,4",
+          "startNodeId": "5,4",
+          "endNodeId": "4,4",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "5,5-5,6",
+          "startNodeId": "5,5",
+          "endNodeId": "5,6",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "5,6-5,7",
+          "startNodeId": "5,6",
+          "endNodeId": "5,7",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "5,7-5,8",
+          "startNodeId": "5,7",
+          "endNodeId": "5,8",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        },
+        {
+          "edgeId": "5,6-6,6",
+          "startNodeId": "5,6",
+          "endNodeId": "6,6",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "Autoxing",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            },
+            {
+              "vehicleTypeId": "Reeman",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "maxSpeed": 1.0,
+              "reentryAllowed": true
+            }
+          ]
+        }
+      ],
+      "stations": [
+        {
+          "stationId": "station_3,4",
+          "interactionNodeIds": [
+            "3,4"
+          ],
+          "stationName": "Rack_1",
+          "stationPosition": {
+            "x": -1.5075,
+            "y": 4.9925
+          }
+        },
+        {
+          "stationId": "station_5,4",
+          "interactionNodeIds": [
+            "5,4"
+          ],
+          "stationName": "Rack_2",
+          "stationPosition": {
+            "x": 1.9925,
+            "y": 5.0
+          }
+        },
+        {
+          "stationId": "station_6,6",
+          "interactionNodeIds": [
+            "6,6"
+          ],
+          "stationName": "Rack_3",
+          "stationPosition": {
+            "x": 3.405,
+            "y": 14.665
+          }
+        }
+      ]
+    }
+  ]
+}
