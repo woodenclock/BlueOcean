@@ -1,0 +1,83 @@
+image: AMAV-X.png
+resolution: 0.05
+origin:
+- -17.3
+- -5.95
+- 0.0
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+axbot:
+  id: 32
+  uid: 6a3c989647b7f53a9f8025fb
+  map_name: AMAV-X
+  map_version: 2
+  overlays_version: 12
+  create_time: 1782724957
+  last_modified_time: 1782725295
+  image_url: http://192.168.68.64:8090/maps/32.png
+  thumbnail_url: http://192.168.68.64:8090/maps/32/thumbnail
+  pbstream_url: http://192.168.68.64:8090/maps/32.pbstream
+  overlays: '{"type": "FeatureCollection", "features": [{"id": "6a3c97535894bb9e4397abc6",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [0.0003185306842934155,
+    -0.4993204905518041]}, "properties": {"dockingPointId": "6a3c9753348bfc9e02d456d8",
+    "endType": "0", "iconYaw": 360, "mapOverlay": true, "startType": "0", "type":
+    "36", "yaw": "90"}}, {"id": "6a3c9753348bfc9e02d456d8", "type": "Feature", "geometry":
+    {"type": "Point", "coordinates": [0.00031853068429330537, 0.3999998731727339]},
+    "properties": {"deviceIds": ["L352511d06791Lx"], "dockingPointId": "6a3c97535894bb9e4397abc6",
+    "endType": "0", "iconYaw": 180, "mapOverlay": true, "name": "Charging Station",
+    "startType": "0", "type": "9", "yaw": 270}}, {"id": "6a3ccfb1213f105c7be6d262",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-1.5075, 4.992500000000001]},
+    "properties": {"endType": "0", "iconYaw": 449, "mapOverlay": true, "name": "Rack_1",
+    "startType": "0", "type": "34", "yaw": 1}}, {"id": "6a3cd0a4cba7a9d92bfa2720",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [1.9925, 5]},
+    "properties": {"endType": "0", "iconYaw": 270, "mapOverlay": true, "name": "Rack_2",
+    "startType": "0", "type": "34", "yaw": 180}}, {"id": "6a3cd1098d2eb4fc75a3d5d9",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [3.405, 14.665]},
+    "properties": {"endType": "0", "iconYaw": 270, "mapOverlay": true, "name": "Rack_3",
+    "startType": "0", "type": "34", "yaw": 180}}, {"id": "6a3cdbf633bb3b5471f1551e",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-10.007500000000002,
+    7.2775]}, "properties": {"endType": "0", "iconYaw": 90, "mapOverlay": true, "name":
+    "Point_01", "startType": "0", "type": "10", "yaw": 360}}, {"id": "6a3cdc7b755a4cb3f3a4fe6c",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-6.017500000000001,
+    7.2925]}, "properties": {"endType": "0", "iconYaw": 449, "mapOverlay": true, "name":
+    "Point_02", "startType": "0", "type": "10", "yaw": 1}}, {"id": "6a3cdcc349fccd75c317edd0",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [-0.020000000000000004,
+    7.3]}, "properties": {"endType": "0", "iconYaw": 91, "mapOverlay": true, "name":
+    "Point_04", "startType": "0", "type": "10", "yaw": 359}}, {"id": "6a3cde4fdb0c77a5b35567cb",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 5.02]}, "properties":
+    {"endType": "0", "iconYaw": 180, "mapOverlay": true, "name": "Point_05", "startType":
+    "0", "type": "10", "yaw": 270}}, {"id": "6a3cde7d1b7b72772be79c90", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [0, 3.02]}, "properties": {"endType":
+    "0", "iconYaw": 180, "mapOverlay": true, "name": "Point_06", "startType": "0",
+    "type": "10", "yaw": 270}}, {"id": "6a3cdec6ac959d21133a5327", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [-1.9875, 2.9975]}, "properties":
+    {"endType": "0", "iconYaw": 180, "mapOverlay": true, "name": "Point_07", "startType":
+    "0", "type": "10", "yaw": 270}}, {"id": "6a3ce773e26df3748484e027", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [-1.9925, 1.01]}, "properties": {"endType":
+    "0", "iconYaw": 361, "mapOverlay": true, "name": "Point_08", "startType": "0",
+    "type": "10", "yaw": 89}}, {"id": "6a3ce85b8588be333a611965", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [-6.005, 2.9800000000000004]}, "properties":
+    {"endType": "0", "iconYaw": 360, "mapOverlay": true, "name": "Point_03", "startType":
+    "0", "type": "10", "yaw": 90}}, {"id": "6a3ce919fcd125f57bae874a", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [1.9075, 7.285000000000001]}, "properties":
+    {"endType": "0", "iconYaw": 360, "mapOverlay": true, "name": "Point_09", "startType":
+    "0", "type": "10", "yaw": 90}}, {"id": "6a3ce9873221dfacd626f245", "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [1.9050000000000002, 14.702500000000002]},
+    "properties": {"endType": "0", "iconYaw": 271, "mapOverlay": true, "name": "Point_10",
+    "startType": "0", "type": "10", "yaw": 179}}, {"id": "6a3ce9c8564cd82967bad452",
+    "type": "Feature", "geometry": {"type": "Point", "coordinates": [1.9000000000000001,
+    25.990000000000002]}, "properties": {"endType": "0", "iconYaw": 179, "mapOverlay":
+    true, "name": "Point_11", "startType": "0", "type": "10", "yaw": 271}}, {"id":
+    "6a3c990fcadeb40f11b5741a", "type": "Feature", "geometry": {"type": "LineString",
+    "coordinates": [[-10.621457475394891, 8.827646039293313], [-0.4064112090418348,
+    8.722897627109205], [0.4483350019768295, 9.576595277138722], [0.2891164936613677,
+    14.326927174010962], [0.1518034986247585, 26.435955016097523]]}, "properties":
+    {"endType": "0", "lineType": "2", "mapOverlay": true, "startType": "0"}}, {"id":
+    "6a3cdcdcc083dbc79031a27e", "type": "Feature", "geometry": {"type": "LineString",
+    "coordinates": [[-4.333354485481777, 6.7359344818385125], [-2.210273640628202,
+    6.749938972205882]]}, "properties": {"endType": "0", "lineType": "2", "mapOverlay":
+    true, "startType": "0"}}, {"id": "6a3cdce6572cc07c2c96cd85", "type": "Feature",
+    "geometry": {"type": "LineString", "coordinates": [[-4.306745893813968, 5.19894151196354],
+    [-2.22287775187624, 5.2260752715938]]}, "properties": {"endType": "0", "lineType":
+    "2", "mapOverlay": true, "startType": "0"}}]}'

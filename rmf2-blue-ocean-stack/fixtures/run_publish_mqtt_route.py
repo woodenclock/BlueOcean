@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "paho-mqtt",
+# ]
+# ///
+"""Publish GameTL Autoxing L300 demo route order via MQTT.
+
+Run with uv (provisions paho-mqtt automatically): ``uv run fixtures/run_publish_mqtt_route.py``.
+
+Adapted from src/vda5050_core_gametl/vda5050_core_py/autoxing-l300/publish_autoxing_l300_route.py
+"""
+
+import argparse
+import copy
+import json
+import os
+import sys
+import threading
+import time
+from datetime import datetime, timezone
+
+try:
+    import paho.mqtt.client as mqtt
+except ImportError:
+    print("paho-mqtt missing — run with uv: uv run fixtures/run_publish_mqtt_route.py", file=sys.stderr)
+    sys.exit(1)
+
+ORDER_TOPIC = "uagv/v2/Autoxing/A001/order"
+STATE_TOPIC = "uagv/v2/Autoxing/A001/state"
+ORDER_ID = "gametl_autoxing_l300"
+MAP_ID = "gametl_demo"
+
+ORDER = {
+    "headerId": 1,
+    "timestamp": "",
+    "version": "2.0.0",
+    "manufacturer": "Autoxing",
+    "serialNumber": "A001",
+    "orderId": ORDER_ID,
+    "orderUpdateId": 0,
+    "nodes": [
+        {"nodeId": "node_table", "sequenceId": 0, "released": True, "actions": [],
+         "nodePosition": {"x": -11.0, "y": 1.2, "mapId": MAP_ID}},
+        {"nodeId": "node_row",   "sequenceId": 2, "released": True, "actions": [],
+         "nodePosition": {"x": -11.0, "y": 3.0, "mapId": MAP_ID}},
+        {"nodeId": "node_west",  "sequenceId": 4, "released": True, "actions": [],
+         "nodePosition": {"x": -16.0, "y": 3.0, "mapId": MAP_ID}},
+        {"nodeId": "node_east",  "sequenceId": 6, "released": True, "actions": [],
+         "nodePosition": {"x": -6.0,  "y": 3.0, "mapId": MAP_ID}},
+    ],
+    "edges": [
+        {"edgeId": "edge_table_row", "sequenceId": 1, "released": True,
+         "startNodeId": "node_table", "endNodeId": "node_row",  "actions": []},
+        {"edgeId": "edge_row_west",  "sequenceId": 3, "released": True,
+         "startNodeId": "node_row",   "endNodeId": "node_west", "actions": []},
+        {"edgeId": "edge_west_east", "sequenceId": 5, "released": True,
+         "startNodeId": "node_west",  "endNodeId": "node_east", "actions": []},
+    ],
+}
+
+
+def order_payload() -> str:
+    msg = copy.deepcopy(ORDER)
+    msg["headerId"] = 4
+    msg["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    return json.dumps(msg)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Send demo VDA5050 route order via MQTT")
+    parser.add_argument("--broker", default="localhost", help="MQTT broker host (default: localhost)")
+    default_mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=default_mqtt_port,
+        help=f"MQTT broker port (default: {default_mqtt_port}, from MQTT_PORT env)",
+    )
+    parser.add_argument("--wait-route", action="store_true", help="Wait for full route completion")
+    args = parser.parse_args()
+
+    latest: dict = {}
+    updated = threading.Event()
+
+    def on_message(_c, _u, msg):
+        try:
+            latest.clear()
+            latest.update(json.loads(msg.payload.decode()))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return
+        updated.set()
+
+    client = mqtt.Client()
+    client.on_message = on_message
+    client.connect(args.broker, args.port, 60)
+    client.subscribe(STATE_TOPIC)
+    client.loop_start()
+    time.sleep(0.3)
+
+    print(f"Publishing order to {ORDER_TOPIC} on {args.broker}:{args.port} ...")
+    client.publish(ORDER_TOPIC, order_payload())
+
+    def wait_for(check, timeout, label):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            updated.wait(0.25)
+            updated.clear()
+            if latest and check(latest):
+                print(f"{label}: PASS")
+                return True
+        print(f"{label}: FAIL", file=sys.stderr)
+        return False
+
+    def accepted(state):
+        return (state.get("orderId") == ORDER_ID
+                and len(state.get("nodeStates") or []) == 4
+                and len(state.get("edgeStates") or []) == 3)
+
+    def route_done(state):
+        return (state.get("lastNodeId") == "node_east"
+                and state.get("lastNodeSequenceId", 0) == 6)
+
+    print("Phase A: waiting for order acceptance ...")
+    if not wait_for(accepted, 5.0, "Phase A"):
+        client.loop_stop()
+        return 1
+
+    if not args.wait_route:
+        client.loop_stop()
+        print("Done. Use --wait-route for full navigation check.")
+        return 0
+
+    print("Phase B: waiting for route completion ...")
+    ok = wait_for(route_done, 600.0, "Phase B")
+    client.loop_stop()
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

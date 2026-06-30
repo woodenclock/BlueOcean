@@ -1,0 +1,14 @@
+{
+  "git.autoRepositoryDetection": "subFolders",
+  "git.repositoryScanMaxDepth": 3,
+  "git.detectSubmodules": true,
+  "git.scmRepositories.visible": 10,
+  "git.scanRepositories": [
+    "src/rmf2-ui-gametl",
+    "src/rmf2_scheduler_gametl",
+    "src/rmf2_task_orchestrator_gametl",
+    "src/res_mapf_gametl",
+    "src/vda5050_core_gametl",
+    "src/rmf2_map_server"
+  ]
+}

@@ -1,0 +1,11 @@
+# Rust build artifacts (host target/ must not pollute Linux container builds)
+**/target/
+
+# Python / OS noise
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/.DS_Store
+
+# Git (not needed in image build context)
+.git/

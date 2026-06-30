@@ -1,0 +1,33 @@
+---
+description: Every implementation plan must list Files affected at the top
+alwaysApply: true
+---
+
+# Plan format — Files affected first
+
+When creating or updating an implementation plan (CreatePlan, plan documents, or multi-step task breakdowns), **always** put a **Files affected** section immediately after the plan title — before Scope, Overview, or any other section.
+
+## Required table
+
+| Path | Action |
+|------|--------|
+| `path/to/file` | **Create** / **Edit** / **Delete** — brief note |
+
+- Use markdown links to repo paths when possible.
+- List every file that will be created, modified, or deleted.
+- Optionally add **Read-only inputs** and **Not changed** subsections for clarity.
+
+## Example
+
+```markdown
+# Add feature X
+
+## Files affected
+
+| Path | Action |
+|------|--------|
+| `src/foo.py` | **Create** |
+| `README.md` | **Edit** — document feature X |
+
+
+Do not skip this section for small plans; a one-row table is fine.

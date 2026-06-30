@@ -1,0 +1,61 @@
+# Canonical robot config for the L1 floor — SINGLE SOURCE OF TRUTH for robot
+# identity, onboard maps, REST endpoints, and demo routes. The VDA5050
+# master loads this file (selected by VDA5050_MAP_ID=l1-artc) and serves it over HTTP
+# (/robots).
+#
+# One unified id namespace:
+#   robot_id   the single id used by the scheduler / orchestrator / MAPF planner,
+#              the master /state + /robots, the UI, and the map_transforms.yaml
+#              adapter keys. (Replaces the old planner_id + fleet_id split.)
+# manufacturer + serial_number stay as the hardware identity — VDA5050 MQTT
+# topics are built from them (uagv/v2/<manufacturer>/<serial_number>/...).
+#
+# `endpoint` is each robot's direct REST base/host (moved here from config.env):
+#   Autoxing — full base URL incl. port, e.g. http://192.168.68.64:8090
+#   Reeman   — host or host:port (scheme added by consumers), e.g. 192.168.68.62
+# It is the single source of truth for /demo/direct-navigate + jack control.
+#
+# Demo starts come from live robot localization (/state), not config — only goals
+# are configured under routes.real. Node ids reference maps/l1-artc/real.layout.lif.json.
+# asset_dir is maps/l1-artc/<robot_id>_map. Frame offsets vs the AutoXing master live
+# in maps/l1-artc/map_transforms.yaml.
+
+robots:
+  - robot_id: autoxing-1
+    manufacturer: Autoxing
+    serial_number: A001
+    endpoint: http://192.168.68.64:8090
+    onboard_map:
+      name: "l1-artc"
+      id: 27
+      asset_dir: maps/l1-artc/autoxing-1_map
+      note: "Reference (master) frame — layout x/y are measured in this frame (autoxing_map_1095x1045)."
+    routes:
+      real: { goal: "4,6" }
+
+  - robot_id: reeman-1
+    manufacturer: Reeman
+    serial_number: R001
+    endpoint: 192.168.68.60
+    onboard_map:
+      name: "1fa43762ca0bec4a673fb45d2dd544e8"
+      alias: "BlueOceanNeo"
+      asset_dir: maps/l1-artc/reeman-1_map
+      note: "On-robot name is an immutable hash (= map_id); only the alias is editable. The VDA5050 map_id 'l1-artc' comes from the adapter's VDA5050_MAP_ID env (master frame = AutoXing). Frame offset vs AutoXing via maps/map_transforms.yaml."
+    routes:
+      real: { goal: "3,6" }
+
+  # Second Reeman robot (not in use — uncomment to enable).
+  # Same manufacturer as reeman-1; distinguished by serial_number (R002) and
+  # robot_id (reeman-2-blue). Own onboard map + map_transforms.yaml entry.
+  # - robot_id: reeman-2-blue
+  #   manufacturer: Reeman
+  #   serial_number: R002
+  #   endpoint: 192.168.68.60
+  #   onboard_map:
+  #     name: "1fa43762ca0bec4a673fb45d2dd544e8"
+  #     alias: "BlueOceanNeo"
+  #     asset_dir: maps/l1-artc/reeman-2-blue_map
+  #     note: "Own native frame; offset vs AutoXing master via map_transforms.yaml adapters.reeman-2-blue."
+  #   routes:
+  #     real: { goal: "7,9" }

@@ -1,0 +1,48 @@
+---
+description: AutoXing pick_rack UI and scheduler wrapper (see project.mdc for spellbook-only rule)
+alwaysApply: false
+globs: src/**/pick_rack.py,src/**/spellbook/**,src/**/vda-visualiser/**
+---
+
+# AutoXing pick_rack
+
+> **Robot REST:** spellbook only — see [project.mdc](project.mdc).
+
+## Canonical implementation
+
+The **source of truth** for rack pick-and-place is the vendored spellbook:
+
+`src/vda5050_core_gametl/vda5050_core_py/demo-june-blue-ocean/autoxing/autoxing_bridge/spellbook/pick_rack.py`
+
+Copied from autoxing-spellbook-cli. Do **not** reimplement the robot REST sequence elsewhere.
+
+Sequence (word-for-word):
+
+1. `POST /services/start_rack_size_detection` → sleep 3s
+2. `POST /chassis/moves` `align_with_rack` → `monitor_move_after_dispatch()`
+3. `POST /services/jack_up` → sleep 2s
+4. `POST /chassis/moves` `to_unload_point` → `monitor_move_after_dispatch()`
+5. `POST /services/jack_down`
+
+Rack poses come from **robot map overlays** (`get_rack_points()`), not scheduler layout nodes.
+
+## Scheduler wrapper
+
+`src/rmf2_scheduler_gametl/demo_routes/src/demo_routes/pick_rack.py` is a thin FastAPI layer only:
+
+- Loads spellbook via `spellbook_loader.load_pick_rack(endpoint)` (`AUTOXING_BASE_URL` from `maps/robots.yaml`)
+- Calls spellbook functions directly (`start_rack_detection`, `align_with_rack`, `jack_up`, …)
+- Exposes `POST /demo/pick-rack` and `GET /demo/pick-rack/points`
+
+Do not duplicate move/jack HTTP in the scheduler.
+
+## UI
+
+- AutoXing robot card: **Pickup** / **Putdown** chips (**West**, **FarNorth** → `Rack_West`, `Rack_FarNorth`)
+- One **Pick rack** button → `POST /demo/pick-rack`
+- Jack badge live via master `WS /ws/state`
+- Keep purple **R** ring on layout rack nodes; do not plot spellbook overlay coords on the map
+
+## Legacy
+
+`POST /demo/rack-direct` (navigate to layout node + jack) remains for curl only — not the UI path.

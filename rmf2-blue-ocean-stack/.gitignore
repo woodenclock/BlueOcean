@@ -1,0 +1,22 @@
+# Nested source repos (managed separately via vcs import / .repos)
+src/
+
+# OS / editor noise
+.DS_Store
+.claude
+
+# Draw.io diagrams (local editing only for now)
+*.drawio
+
+# Local env — copy .env.sample to .env (the sample is the tracked template).
+.env
+
+# Python caches / local venvs
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
+**/.venv/
+
+# Map calibration review artifacts (overlay + cache)
+maps/map_transform/out/
