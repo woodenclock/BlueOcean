@@ -1,0 +1,111 @@
+{
+  "coordinateSystem": "world",
+  "robots": [
+    {
+      "id": "robot-01",
+      "name": "Robot 01",
+      "color": "#00A3FF",
+      "speed": 1.2,
+      "scale": 1,
+      "enabled": true,
+      "loop": false,
+      "startWaypointIndex": 0,
+      "path": [
+        {
+          "id": 0,
+          "x": -10.0,
+          "y": 25.5,
+          "z": 0.2,
+          "label": "ROBOT-01 Start"
+        },
+        {
+          "id": 1,
+          "x": -0.5,
+          "y": 16.0,
+          "z": 0.2,
+          "label": "ROBOT-01 WP 1"
+        },
+        {
+          "id": 2,
+          "x": 0.5,
+          "y": 12.5,
+          "z": 0.2,
+          "label": "ROBOT-01 WP 2"
+        },
+        {
+          "id": 3,
+          "x": 7.5,
+          "y": 5.5,
+          "z": 0.2,
+          "label": "ROBOT-01 WP 3"
+        },
+        {
+          "id": 4,
+          "x": 7.5,
+          "y": 3.0,
+          "z": 0.2,
+          "label": "ROBOT-01 WP 4"
+        },
+        {
+          "id": 5,
+          "x": 12.0,
+          "y": 1.5,
+          "z": 0.2,
+          "label": "ROBOT-01 Goal"
+        }
+      ]
+    },
+    {
+      "id": "robot-02",
+      "name": "Robot 02",
+      "color": "#FF7A00",
+      "speed": 1.0,
+      "scale": 1,
+      "enabled": true,
+      "loop": true,
+      "startWaypointIndex": 0,
+      "path": [
+        {
+          "id": 0,
+          "x": 12.0,
+          "y": 25.5,
+          "z": 0.2,
+          "label": "ROBOT-02 Start"
+        },
+        {
+          "id": 1,
+          "x": 24.0,
+          "y": 12.5,
+          "z": 0.2,
+          "label": "ROBOT-02 Goal"
+        }
+      ]
+    },
+    {
+      "id": "robot-03",
+      "name": "Robot 03",
+      "color": "#6BFF6B",
+      "speed": 0.9,
+      "scale": 1,
+      "enabled": true,
+      "loop": false,
+      "startWaypointIndex": 0,
+      "path": [
+        {
+          "id": 0,
+          "x": 22.0,
+          "y": 33.0,
+          "z": 0.2,
+          "label": "ROBOT-03 Start"
+        },
+        {
+          "id": 1,
+          "x": 12.0,
+          "y": 33.0,
+          "z": 0.2,
+          "label": "ROBOT-03 Goal"
+        }
+      ]
+    }
+  ]
+}

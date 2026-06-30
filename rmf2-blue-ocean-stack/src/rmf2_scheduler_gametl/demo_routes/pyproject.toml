@@ -1,0 +1,28 @@
+[project]
+name = "demo-routes"
+version = "0.1.0"
+description = "Blue Ocean demo API routes for the RMF2 scheduler stack"
+readme = "README.md"
+authors = [
+    { name = "Chen Bainian", email = "chenbn@artc.a-star.edu.sg" },
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.101.0",
+    "pika>=1.3.2",
+    "pydantic>=2.12.5",
+    "requests>=2.31",
+    "pyyaml>=6.0",
+    "rich>=13.0",
+    "websockets>=12.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# Map + robot config is no longer bundled — the scheduler fetches it from the
+# VDA5050 master (/map, /transform, /robots), the single source of truth.

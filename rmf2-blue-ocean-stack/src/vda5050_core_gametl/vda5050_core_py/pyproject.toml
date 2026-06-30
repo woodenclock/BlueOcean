@@ -1,0 +1,22 @@
+[project]
+name = "vda5050-core-py"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Python bindings for vda5050_core (colcon-built C extension)"
+dependencies = [
+    "requests>=2.31.0",
+    "rich>=13.0.0",
+    "websockets>=12.0",
+    "pyyaml>=6.0.1",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vda5050_core_py*"]
+
+[tool.setuptools.package-data]
+vda5050_core_py = ["*.so", "*.pyi", "py.typed"]

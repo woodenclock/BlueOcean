@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop/*
+
+jobs:
+  industrial_ci:
+    strategy:
+      matrix:
+        env:
+          # GCC Coverage Build
+          - ICI_JOB_NAME: gcc-coverage
+            ROS_DISTRO: humble
+            TARGET_CMAKE_ARGS: "-DCMAKE_C_FLAGS='--coverage' -DCMAKE_CXX_FLAGS='--coverage'"
+            AFTER_SCRIPT: "./coverage.sh ci"
+            CODE_COVERAGE: "codecov.io"
+          # Clang Build
+          - ICI_JOB_NAME: clang
+            ROS_DISTRO: humble
+            ADDITIONAL_DEBS: clang lld
+            CC: "clang"
+            CXX: "clang++"
+            TARGET_CMAKE_ARGS: "-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld -DCMAKE_MODULE_LINKER_FLAGS=-fuse-ld=lld -DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld"
+          # Adress Sanitizer
+          - ICI_JOB_NAME: gcc-asan
+            ROS_DISTRO: humble
+            TARGET_CMAKE_ARGS: "-DCMAKE_C_FLAGS='-fsanitize=address' -DCMAKE_CXX_FLAGS='-fsanitize=address'"
+          # Thread Sanitizer
+          - ICI_JOB_NAME: gcc-tsan
+            ROS_DISTRO: humble
+            TARGET_CMAKE_ARGS: "-DCMAKE_C_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer' -DCMAKE_CXX_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
+    env:
+      ISOLATION: "shell"
+      CCACHE_DIR: /github/home/.ccache
+    runs-on: ubuntu-latest
+    container:
+      image: ros:humble-ros-core
+    steps:
+      - uses: actions/checkout@v2
+      # step up caching
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ICI_JOB_NAME }}
+      # Run industrial_ci
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{matrix.env}}
+      # Upload Coverage report if configured
+      - name: Install dependency for Codecov
+        if: ${{ matrix.env.CODE_COVERAGE == 'codecov.io' }}
+        run: sudo apt install curl -y
+      - name: Upload coverage reports to Codecov
+        if: ${{ matrix.env.CODE_COVERAGE == 'codecov.io' }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.info
+          fail_ci_if_error: true

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rmf_scheduler</name>
+  <version>0.2.3</version>
+  <description>
+    An event scheduler for RMF.
+    These events including robot tasks and other events that is related to the robot operation.
+  </description>
+  <maintainer email="chenbn@artc.a-star.edu.sg">Chen Bainian</maintainer>
+  <license>Apache License 2.0</license>
+  
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  
+  <exec_depend>rmf2_scheduler</exec_depend>
+  <exec_depend>rmf2_scheduler_py</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

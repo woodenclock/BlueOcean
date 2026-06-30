@@ -1,0 +1,15 @@
+# Ports: ../../config/config.env (or run with --env-file ../../config/config.env)
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
+        VDA5050_PORT: ${VDA5050_PORT:-8000}
+        TASK_ORCHESTRATOR_PORT: ${TASK_ORCHESTRATOR_PORT:-2727}
+        NGINX_PORT: ${NGINX_PORT:-80}
+    image: rmf2-ui-dashboard:local
+    ports:
+      - '${UI_PORT:-3000}:${NGINX_PORT:-80}'
+    restart: unless-stopped

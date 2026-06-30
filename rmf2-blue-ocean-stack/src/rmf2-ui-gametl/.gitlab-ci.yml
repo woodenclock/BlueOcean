@@ -1,0 +1,110 @@
+# Build only merge request and default branch
+# and branches start with (develop).
+# save time for quick demo pushes
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH =~ /^develop/
+
+stages:
+  - test
+  - build
+
+# Template for pnpm setup
+.rmf2-ui:pnpm-setup:
+  image: node:24
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-11 --activate
+    - pnpm config set store-dir .pnpm-store
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
+test:
+  stage: test
+  extends: .rmf2-ui:pnpm-setup
+  script:
+    - pnpm install
+    - pnpm test
+  # coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  # artifacts:
+  #   reports:
+  #     coverage_report:
+  #       coverage_format: cobertura
+  #       path: coverage/cobertura-coverage.xml
+
+lint:
+  stage: test
+  extends: .rmf2-ui:pnpm-setup
+  script:
+    - pnpm install
+    - pnpm lint
+
+build-dashboard-development:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  variables:
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE/dashboard:$CI_COMMIT_REF_SLUG
+  before_script:
+    # Login to registry
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
+    - |
+      docker build \
+        --pull \
+        --build-arg "MODE=development" \
+        -t $CONTAINER_IMAGE \
+        -f Dockerfile \
+        --target dashboard \
+        .
+    - docker push $CONTAINER_IMAGE
+
+build-dashboard-staging:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  variables:
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE/dashboard-staging:$CI_COMMIT_REF_SLUG
+  before_script:
+    # Login to registry
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
+    - |
+      docker build \
+        --pull \
+        --build-arg "MODE=staging" \
+        -t $CONTAINER_IMAGE \
+        -f Dockerfile \
+        --target dashboard \
+        .
+    - docker push $CONTAINER_IMAGE
+
+build-dashboard-production:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  variables:
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE/dashboard-prod:$CI_COMMIT_REF_SLUG
+  before_script:
+    # Login to registry
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
+    - |
+      docker build \
+        --pull \
+        --build-arg "MODE=production" \
+        -t $CONTAINER_IMAGE \
+        -f Dockerfile \
+        --target dashboard \
+        .
+    - docker push $CONTAINER_IMAGE

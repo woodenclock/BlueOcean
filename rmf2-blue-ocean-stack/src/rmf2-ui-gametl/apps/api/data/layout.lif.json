@@ -1,0 +1,347 @@
+{
+  "metaInformation": {
+    "projectIdentification": "Dashboard Demo Layout",
+    "creator": "Dashboard API",
+    "exportTimestamp": "2026-06-04T00:00:00.00Z",
+    "lifVersion": "1.0.0"
+  },
+  "layouts": [
+    {
+      "layoutId": "layout_world_demo",
+      "layoutName": "World Demo Layout",
+      "layoutVersion": "1",
+      "layoutLevelId": "0",
+      "layoutDescription": "Converted from dashboard robots.json path data. Coordinates use the viewer world coordinate system.",
+      "nodes": [
+        {
+          "nodeId": "R01_N0",
+          "nodeName": "ROBOT-01 Start",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": -10.0,
+            "y": 25.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R01_N1",
+          "nodeName": "ROBOT-01 WP 1",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": -0.5,
+            "y": 16.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R01_N2",
+          "nodeName": "ROBOT-01 WP 2",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 0.5,
+            "y": 12.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R01_N3",
+          "nodeName": "ROBOT-01 WP 3",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 7.5,
+            "y": 5.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R01_N4",
+          "nodeName": "ROBOT-01 WP 4",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 7.5,
+            "y": 3.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R01_N5",
+          "nodeName": "ROBOT-01 Goal",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 12.0,
+            "y": 1.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R02_N0",
+          "nodeName": "ROBOT-02 Start",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 12.0,
+            "y": 25.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R02_N1",
+          "nodeName": "ROBOT-02 Goal",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 24.0,
+            "y": 12.5
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R03_N0",
+          "nodeName": "ROBOT-03 Start",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 22.0,
+            "y": 33.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        },
+        {
+          "nodeId": "R03_N1",
+          "nodeName": "ROBOT-03 Goal",
+          "mapId": "Map_World",
+          "nodePosition": {
+            "x": 12.0,
+            "y": 33.0
+          },
+          "vehicleTypeNodeProperties": [
+            {
+              "vehicleTypeId": "demo.robot"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "R01_N0-R01_N1",
+          "edgeName": "ROBOT-01 Start to WP 1",
+          "startNodeId": "R01_N0",
+          "endNodeId": "R01_N1",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R01_N1-R01_N2",
+          "edgeName": "ROBOT-01 WP 1 to WP 2",
+          "startNodeId": "R01_N1",
+          "endNodeId": "R01_N2",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R01_N2-R01_N3",
+          "edgeName": "ROBOT-01 WP 2 to WP 3",
+          "startNodeId": "R01_N2",
+          "endNodeId": "R01_N3",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R01_N3-R01_N4",
+          "edgeName": "ROBOT-01 WP 3 to WP 4",
+          "startNodeId": "R01_N3",
+          "endNodeId": "R01_N4",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R01_N4-R01_N5",
+          "edgeName": "ROBOT-01 WP 4 to Goal",
+          "startNodeId": "R01_N4",
+          "endNodeId": "R01_N5",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R02_N0-R02_N1",
+          "edgeName": "ROBOT-02 Start to Goal",
+          "startNodeId": "R02_N0",
+          "endNodeId": "R02_N1",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R02_N1-R02_N0",
+          "edgeName": "ROBOT-02 Goal to Start",
+          "startNodeId": "R02_N1",
+          "endNodeId": "R02_N0",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        },
+        {
+          "edgeId": "R03_N0-R03_N1",
+          "edgeName": "ROBOT-03 Start to Goal",
+          "startNodeId": "R03_N0",
+          "endNodeId": "R03_N1",
+          "vehicleTypeEdgeProperties": [
+            {
+              "vehicleTypeId": "demo.robot",
+              "vehicleOrientation": 0.0,
+              "orientationType": "TANGENTIAL",
+              "rotationAllowed": false
+            }
+          ]
+        }
+      ],
+      "stations": [
+        {
+          "stationId": "S_R01_START",
+          "interactionNodeIds": ["R01_N0"],
+          "stationName": "ROBOT-01 Start",
+          "stationDescription": "Start station for Robot 01",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": -10.0,
+            "y": 25.5,
+            "theta": 0.0
+          }
+        },
+        {
+          "stationId": "S_R01_GOAL",
+          "interactionNodeIds": ["R01_N5"],
+          "stationName": "ROBOT-01 Goal",
+          "stationDescription": "Goal station for Robot 01",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": 12.0,
+            "y": 1.5,
+            "theta": 0.0
+          }
+        },
+        {
+          "stationId": "S_R02_START",
+          "interactionNodeIds": ["R02_N0"],
+          "stationName": "ROBOT-02 Start",
+          "stationDescription": "Start station for Robot 02",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": 12.0,
+            "y": 25.5,
+            "theta": 0.0
+          }
+        },
+        {
+          "stationId": "S_R02_GOAL",
+          "interactionNodeIds": ["R02_N1"],
+          "stationName": "ROBOT-02 Goal",
+          "stationDescription": "Goal station for Robot 02",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": 24.0,
+            "y": 12.5,
+            "theta": 0.0
+          }
+        },
+        {
+          "stationId": "S_R03_START",
+          "interactionNodeIds": ["R03_N0"],
+          "stationName": "ROBOT-03 Start",
+          "stationDescription": "Start station for Robot 03",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": 22.0,
+            "y": 33.0,
+            "theta": 0.0
+          }
+        },
+        {
+          "stationId": "S_R03_GOAL",
+          "interactionNodeIds": ["R03_N1"],
+          "stationName": "ROBOT-03 Goal",
+          "stationDescription": "Goal station for Robot 03",
+          "stationHeight": 0.0,
+          "stationPosition": {
+            "x": 12.0,
+            "y": 33.0,
+            "theta": 0.0
+          }
+        }
+      ]
+    }
+  ]
+}

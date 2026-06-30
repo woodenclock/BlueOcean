@@ -1,0 +1,36 @@
+{
+  "name": "@rmf2-ui/chakra",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.es.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm typegen && tsc -b && vite build",
+    "typegen": "pnpm dlx @chakra-ui/cli typegen ./src/horizon/theme/theme.ts",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.22.0",
+    "@emotion/react": "^11.14.0",
+    "next-themes": "^0.4.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
+    "react-router": "^7.6.3"
+  },
+  "devDependencies": {
+    "@chakra-ui/cli": "^3.27.1",
+    "@types/node": "^24.0.12",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}

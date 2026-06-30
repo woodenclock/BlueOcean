@@ -1,0 +1,45 @@
+# RMF2 Task Scheduler — local stack (scheduler API only).
+# Full rmf2 product stack (UI, broker, device_manager, 3d_view) will extend this later.
+# Ports: ../../config/config.env (or --env-file ../../config/config.env)
+
+services:
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-ubuntu:24.04}
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    image: ${SCHEDULER_IMAGE:-rmf2_scheduler:3.12-noble}
+    container_name: rmf2_scheduler
+    command: ["blue_ocean_scheduler", "--host", "0.0.0.0", "--port", "${SCHEDULER_PORT:-8089}"]
+    ports:
+      - "${SCHEDULER_PORT:-8089}:${SCHEDULER_PORT:-8089}"
+    environment:
+      SCHEDULER_PORT: ${SCHEDULER_PORT:-8089}
+      LD_BROKER_URL: ${LD_BROKER_URL:-}
+      AMQP_HOST: ${AMQP_HOST:-amqp-broker}
+      AMQP_PORT: ${AMQP_PORT:-5672}
+    volumes:
+      - scheduler-data:/root/.cache/r2ts-backups
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python3 -c \"import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\\\"SCHEDULER_PORT\\\"]}/docs')\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  scheduler-data:
+
+# Join the umbrella repo's network so `amqp-broker` resolves. Requires the
+# matching umbrella compose stack to be up first (same COMPOSE_PROJECT_NAME).
+networks:
+  default:
+    name: ${COMPOSE_PROJECT_NAME:-rmf2_demo_gametl-dry-run}_rmf2-net
+    external: true

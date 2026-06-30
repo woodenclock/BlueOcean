@@ -1,0 +1,25 @@
+[project]
+name = "blue-ocean-scheduler"
+version = "0.1.0"
+description = "RMF2 scheduler + Blue Ocean demo composition entrypoint"
+readme = "README.md"
+authors = [
+    { name = "Chen Bainian", email = "chenbn@artc.a-star.edu.sg" },
+]
+requires-python = ">=3.10"
+dependencies = [
+    "demo-routes",
+    "fastapi>=0.101.0",
+    "pydantic>=2.12.5",
+    "uvicorn>=0.24.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+blue_ocean_scheduler = "blue_ocean_scheduler.cli:main"
