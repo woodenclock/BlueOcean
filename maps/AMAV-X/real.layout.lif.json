@@ -106,7 +106,7 @@
           "nodeId": "3,2",
           "mapId": "AMAV-X",
           "nodePosition": {
-            "x": -2.0,
+            "x": -1.5,
             "y": -1.06
           },
           "vehicleTypeNodeProperties": [
@@ -124,7 +124,7 @@
           "nodeId": "3,3",
           "mapId": "AMAV-X",
           "nodePosition": {
-            "x": -2.0,
+            "x": -1.5,
             "y": 3.0
           },
           "vehicleTypeNodeProperties": [
@@ -510,27 +510,6 @@
           "edgeId": "3,2-3,3",
           "startNodeId": "3,2",
           "endNodeId": "3,3",
-          "vehicleTypeEdgeProperties": [
-            {
-              "vehicleTypeId": "Autoxing",
-              "vehicleOrientation": 0.0,
-              "orientationType": "TANGENTIAL",
-              "maxSpeed": 1.0,
-              "reentryAllowed": true
-            },
-            {
-              "vehicleTypeId": "Reeman",
-              "vehicleOrientation": 0.0,
-              "orientationType": "TANGENTIAL",
-              "maxSpeed": 1.0,
-              "reentryAllowed": true
-            }
-          ]
-        },
-        {
-          "edgeId": "3,2-3,1",
-          "startNodeId": "3,2",
-          "endNodeId": "3,1",
           "vehicleTypeEdgeProperties": [
             {
               "vehicleTypeId": "Autoxing",

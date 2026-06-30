@@ -31,11 +31,11 @@ services:
     networks:
       - rmf2-net
     healthcheck:
-      test:
-        ["CMD-SHELL", "mosquitto_pub -p ${MQTT_PORT:-1883} -t healthcheck -m ping || exit 1"]
-      # interval: 10s
+      test: ["CMD-SHELL", "mosquitto_pub -p ${MQTT_PORT:-1883} -t healthcheck -m ping || exit 1"]
+      interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 3
+      start_period: 5s
 
   amqp-broker:
     image: rabbitmq:3-management

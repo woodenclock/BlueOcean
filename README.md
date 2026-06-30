@@ -54,6 +54,8 @@ cd rmf2-blue-ocean-stack && git checkout demo-june-blue-ocean
 # 2. Pull all five source repos into src/ (each on demo-june-blue-ocean)
 vcs import src < .repos
 
+# 3. If need to map_transform 
+cd maps && uv run get_map_n_transform.py AMAV-X # or DIR of maps to be tranformed 
 
 # 4. Build and start the stack (first build ~2 min for the ROS images)
 docker compose up --build
