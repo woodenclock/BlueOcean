@@ -11,10 +11,10 @@ axbot:
   id: 32
   uid: 6a3c989647b7f53a9f8025fb
   map_name: AMAV-X
-  map_version: 1
-  overlays_version: 9
-  create_time: 1782356117
-  last_modified_time: 1782378227
+  map_version: 2
+  overlays_version: 12
+  create_time: 1782724957
+  last_modified_time: 1782725295
   image_url: http://192.168.68.64:8090/maps/32.png
   thumbnail_url: http://192.168.68.64:8090/maps/32/thumbnail
   pbstream_url: http://192.168.68.64:8090/maps/32.pbstream
@@ -76,7 +76,8 @@ axbot:
     {"endType": "0", "lineType": "2", "mapOverlay": true, "startType": "0"}}, {"id":
     "6a3cdcdcc083dbc79031a27e", "type": "Feature", "geometry": {"type": "LineString",
     "coordinates": [[-4.333354485481777, 6.7359344818385125], [-2.210273640628202,
-    6.749938972205882]]}, "properties": {"lineType": "2", "mapOverlay": true}}, {"id":
-    "6a3cdce6572cc07c2c96cd85", "type": "Feature", "geometry": {"type": "LineString",
-    "coordinates": [[-4.306745893813968, 5.19894151196354], [-2.22287775187624, 5.2260752715938]]},
-    "properties": {"lineType": "2", "mapOverlay": true}}]}'
+    6.749938972205882]]}, "properties": {"endType": "0", "lineType": "2", "mapOverlay":
+    true, "startType": "0"}}, {"id": "6a3cdce6572cc07c2c96cd85", "type": "Feature",
+    "geometry": {"type": "LineString", "coordinates": [[-4.306745893813968, 5.19894151196354],
+    [-2.22287775187624, 5.2260752715938]]}, "properties": {"endType": "0", "lineType":
+    "2", "mapOverlay": true, "startType": "0"}}]}'
