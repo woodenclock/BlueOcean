@@ -31,7 +31,7 @@ All routes and onboard-map details live in `maps/<VDA5050_MAP_ID>/robots.yaml`
 
 | Operation | Endpoint | Notes |
 |---|---|---|
-| Navigate | `POST /cmd/nav` | Body: `{x, y}` in Reeman frame; **`theta` is optional** and omitted unless the caller supplies it. Dashboard **Direct Control** and robot-card **Reset** send position-only goals; θ is a manual override in the Direct Control form only. MAPF / VDA5050 orders are also position-only (x/y). Rack docking uses an explicit bearing via `navigate_reeman_rotate_then_drive`. |
+| Navigate | `POST /cmd/nav` | Callers (UI, scheduler, VDA5050 adapter) send master-frame `{x, y}` only — no `theta`. Spellbook `navigate_reeman` fetches live pose and sets `theta = atan2(dy, dx)` toward the goal before dispatch. θ in the Direct Control form is an explicit manual override only. Rack docking uses `navigate_reeman_rotate_then_drive` (two-phase rotate-then-drive with explicit bearing). |
 | Get pose | `GET /reeman/pose` | Returns `{x, y, theta}` in Reeman frame |
 | Nav status | `GET /reeman/nav_status` | Polling during a move |
 | **Jack up** | `POST /cmd/hydraulic_up` | Lifts the table; fire-and-forget |

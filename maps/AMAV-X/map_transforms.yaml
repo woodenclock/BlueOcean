@@ -16,9 +16,9 @@ adapters:
   reeman-2-blue:
     map_name: Level3_1
     robot_to_master:
-      tx: -0.6944
-      ty: -0.6094
-      theta: 3.12763
+      tx: -0.7503
+      ty: -0.587
+      theta: 3.124139
       scale: 1.0
     source: image-registration
-    response: 0.279
+    response: 0.2692
